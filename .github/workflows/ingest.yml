@@ -1,0 +1,123 @@
+name: Daily Data Ingest
+
+on:
+  # Daily at 6:05 AM UTC (5 min after worker cron)
+  schedule:
+    - cron: '5 6 * * *'
+  
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force ingest even if recently run'
+        required: false
+        default: 'false'
+        type: boolean
+
+  # Trigger on worker deploy (optional)
+  # workflow_run:
+  #   workflows: ["Deploy Worker"]
+  #   types: [completed]
+
+permissions:
+  contents: write  # Needed to commit updated JSON
+
+jobs:
+  ingest:
+    name: Run Data Ingestion
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Install worker dependencies
+        working-directory: ./worker
+        run: npm ci
+
+      - name: Type check
+        working-directory: ./worker
+        run: npm run typecheck
+
+      - name: Run local ingest (dev mode)
+        working-directory: ./worker
+        env:
+          PARSE_API_KEY: ${{ secrets.PARSE_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+        run: |
+          # Run the ingest logic directly via Node
+          npx tsx --env-file=.dev.vars src/ingest-cli.ts 2>&1 || true
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet public/data/juegos.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes in juegos.json"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in juegos.json"
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/juegos.json
+          git commit -m "chore: update juegos.json [skip ci]
+
+          Generated at $(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          Games: $(jq '.games | length' public/data/juegos.json)
+          "
+          git push
+
+  # Alternative: Trigger deployed worker via HTTP
+  trigger-worker:
+    name: Trigger Deployed Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ vars.WORKER_URL != '' }}
+    
+    steps:
+      - name: Trigger worker ingest endpoint
+        run: |
+          curl -X POST "${{ vars.WORKER_URL }}/ingest" \
+            -H "Authorization: Bearer ${{ secrets.WORKER_AUTH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --max-time 60 \
+            --fail \
+            --silent --show-error
+        env:
+          WORKER_URL: ${{ vars.WORKER_URL }}
+          WORKER_AUTH_TOKEN: ${{ secrets.WORKER_AUTH_TOKEN }}
+
+  notify:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [ingest, trigger-worker]
+    steps:
+      - name: Create GitHub Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Daily Ingest Failed',
+              body: `The daily data ingestion pipeline failed.\n\nWorkflow: ${context.workflow}\nRun: ${context.runId}\nTime: ${new Date().toISOString()}\n\nCheck the workflow logs for details.`,
+              labels: ['bug', 'pipeline', 'automated']
+            })

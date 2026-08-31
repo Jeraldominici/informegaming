@@ -1,0 +1,28 @@
+name = "informegaming-ingest"
+main = "src/index.ts"
+compatibility_date = "2024-08-31"
+compatibility_flags = ["nodejs_compat"]
+
+# KV Namespace for storing games data
+[[kv_namespaces]]
+binding = "KV_NAMESPACE"
+id = "036181f966e04831b698177495a85963"
+preview_id = "54cdb4b33f6142858284f8152598d229"
+
+# Environment variables (set via wrangler secret put or dashboard)
+[vars]
+# PARSE_API_KEY = "pmx_d7cd4f45c540ea150b26d24a792afcbb"           # Get from https://parse.bot (free tier 200/month)
+# GITHUB_TOKEN = ""            # GitHub PAT with repo scope
+# GITHUB_REPO = "owner/repo"   # e.g., "Jeral/informegaming"
+
+# Scheduled trigger: daily at 6 AM UTC
+[triggers]
+crons = ["0 6 * * *"]
+
+# Build configuration
+[build]
+command = "npx tsc --noEmit && echo 'Type check passed'"
+
+# Upload source maps for better debugging
+upload_source_maps = true
+
