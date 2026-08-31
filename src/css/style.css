@@ -1,0 +1,335 @@
+/* ----- RESET Y BASE ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    background: #0b0e14;
+    color: #e4e8ed;
+    line-height: 1.6;
+}
+
+a {
+    color: #00ffcc;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ----- HEADER ----- */
+header {
+    background: #141a24;
+    padding: 18px 0;
+    border-bottom: 2px solid #00ffcc55;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+}
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #00ffcc;
+    letter-spacing: -0.5px;
+}
+.logo span {
+    color: #fff;
+}
+nav {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+nav a {
+    color: #b0c4d9;
+    font-weight: 500;
+    transition: 0.3s;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 4px;
+}
+nav a:hover,
+nav a.active {
+    color: #00ffcc;
+    border-bottom-color: #00ffcc;
+    text-decoration: none;
+}
+
+/* ----- HERO ----- */
+.hero {
+    background: linear-gradient(135deg, #0d1624 0%, #1a2a3a 100%);
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 30px rgba(0, 255, 204, 0.1);
+}
+.hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+}
+.hero h1 span {
+    color: #00ffcc;
+}
+.hero p {
+    font-size: 1.2rem;
+    color: #b0c4d9;
+    max-width: 650px;
+    margin: 10px auto 25px;
+}
+.btn {
+    display: inline-block;
+    background: #00ffcc;
+    color: #0b0e14;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+.btn:hover {
+    transform: scale(1.05);
+    background: #00e6b8;
+    text-decoration: none;
+}
+
+/* ----- SECCIONES ----- */
+section {
+    margin-bottom: 60px;
+}
+section[id] {
+    scroll-margin-top: 90px;
+}
+.section-title {
+    font-size: 2rem;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.section-title span {
+    color: #00ffcc;
+}
+
+/* FILTROS */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+.filter-btn {
+    background: #1f2937;
+    border: 1px solid #374151;
+    color: #b0c4d9;
+    padding: 6px 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 500;
+}
+.filter-btn:hover,
+.filter-btn.active {
+    background: #00ffcc;
+    color: #0b0e14;
+    border-color: #00ffcc;
+}
+
+/* GRID DE TARJETAS */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+.card {
+    background: #141a24;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: 0.3s ease;
+    border: 1px solid #1f2937;
+    display: flex;
+    flex-direction: column;
+}
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 255, 204, 0.15);
+    border-color: #00ffcc55;
+}
+.card-img {
+    height: 160px;
+    background: #1f2937;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #00ffcc;
+}
+.card-body {
+    padding: 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.card-body h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+.card-body p {
+    color: #b0c4d9;
+    font-size: 0.95rem;
+    flex: 1;
+}
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-top: 12px;
+    color: #8899b0;
+    border-top: 1px solid #1f2937;
+    padding-top: 10px;
+}
+
+/* BOTONES Y ETIQUETAS */
+.badge {
+    background: #00ffcc22;
+    color: #00ffcc;
+    padding: 2px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.badge.expired {
+    background: #ff444422;
+    color: #ff6b6b;
+}
+.card-footer {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btn-small {
+    background: #00ffcc;
+    color: #0b0e14;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+}
+.btn-small:hover {
+    background: #00e6b8;
+    transform: scale(1.05);
+    text-decoration: none;
+}
+.countdown {
+    font-size: 0.85rem;
+    color: #ffd93d;
+    font-weight: 600;
+}
+
+/* TABLA HISTORIAL */
+.table-wrap {
+    overflow-x: auto;
+    background: #141a24;
+    border-radius: 16px;
+    border: 1px solid #1f2937;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+th {
+    background: #1f2937;
+    padding: 14px 18px;
+    text-align: left;
+    color: #00ffcc;
+    font-weight: 600;
+}
+td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #1f2937;
+}
+tr:last-child td {
+    border-bottom: none;
+}
+.status {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.status.expired {
+    background: #ff444422;
+    color: #ff6b6b;
+}
+
+/* FOOTER */
+footer {
+    background: #141a24;
+    padding: 30px 0;
+    border-top: 1px solid #1f2937;
+    text-align: center;
+    color: #8899b0;
+    font-size: 0.9rem;
+}
+footer span {
+    color: #00ffcc;
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+    .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    nav {
+        justify-content: center;
+    }
+    .hero h1 {
+        font-size: 2rem;
+    }
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ANIMACIÓN */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.6s ease forwards;
+}
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
