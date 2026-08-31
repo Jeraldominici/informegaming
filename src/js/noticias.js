@@ -1,9 +1,18 @@
-// noticias.js - Consume noticias.json o fallback a WordPress RSS
+// noticias.js - Consume noticias.json o fallback a Worker
 import { CONFIG } from './config.js';
 import { htmlATexto, truncarTexto, esUrlSegura, parsearFecha } from './utils.js';
 
 let todasLasNoticias = [];
 let filtroActual = 'all';
+
+// Detectar base path automáticamente
+function getBasePath() {
+    const path = window.location.pathname;
+    const match = path.match(/^(\/[^\/]+)/);
+    return match ? match[1] : '';
+}
+
+const BASE_PATH = getBasePath();
 
 async function cargarNoticias() {
     const grid = document.getElementById('noticiasGrid');
@@ -11,66 +20,54 @@ async function cargarNoticias() {
     grid.innerHTML = '<p style="color: #8899b0; text-align: center; width: 100%;">Cargando noticias...</p>';
     
     try {
-        // 1. Intentar import estático (build-time)
         let noticiasData = null;
+        
+        // 1. Fetch desde repo (GitHub Pages)
+        const dataUrl = `${BASE_PATH}/data/noticias.json`;
         try {
-            // @ts-ignore
-            const modulo = await import('../../public/data/noticias.json');
-            noticiasData = modulo.default || modulo;
-        } catch {
-            // 2. Fallback: fetch runtime /data/noticias.json
-            try {
-                const resp = await fetch('/data/noticias.json', { cache: 'no-store' });
-                if (resp.ok) noticiasData = await resp.json();
-            } catch {}
+            const resp = await fetch(dataUrl, { cache: 'no-store' });
+            if (resp.ok) {
+                noticiasData = await resp.json();
+                console.log('[noticias] Cargado desde:', dataUrl);
+            }
+        } catch (fetchError) {
+            console.warn('Fetch repo falló:', fetchError);
         }
         
-        // 3. Fallback: WordPress JSON Feed (sin _embed para evitar challenge)
+        // 2. Fallback: WordPress JSON Feed (con proxy CORS si es necesario)
         if (!noticiasData) {
             try {
-                // Probar endpoint simple sin _embed
-                const resp = await fetch(`${CONFIG.apiBase}/posts?per_page=20`, { 
-                    cache: 'no-store',
-                    headers: { 'Accept': 'application/json' }
-                });
-                if (resp.ok) {
-                    const wpPosts = await resp.json();
-                    if (Array.isArray(wpPosts) && wpPosts.length > 0) {
-                        noticiasData = { noticias: wpPosts };
-                    }
-                }
-            } catch {}
-        }
-        
-        // 4. Fallback: WordPress RSS/JSON Feed público
-        if (!noticiasData) {
-            try {
-                const resp = await fetch('https://informegaming.gt.tc/feed/json', { 
-                    cache: 'no-store',
-                    headers: { 'Accept': 'application/json' }
-                });
+                // Usar textise dot iitty como proxy CORS gratuito
+                const feedUrl = 'https://rss2json.com/api.json?rss_url=https://informegaming.gt.tc/feed/';
+                const resp = await fetch(feedUrl, { cache: 'no-store' });
                 if (resp.ok) {
                     const feed = await resp.json();
                     if (feed.items && Array.isArray(feed.items)) {
-                        noticiasData = { noticias: feed.items.map((item) => ({
-                            id: item.id,
-                            title: { rendered: item.title },
-                            excerpt: { rendered: item.content_html || item.summary || '' },
-                            date: item.date_published,
-                            _embedded: { 'wp:featuredmedia': item.image ? [{ source_url: item.image }] : [] },
-                            link: item.url,
-                        }))};
+                        noticiasData = { 
+                            noticias: feed.items.map(item => ({
+                                id: item.guid || item.link,
+                                title: { rendered: item.title },
+                                excerpt: { rendered: item.content || item.description || '' },
+                                date: item.pubDate,
+                                _embedded: { 'wp:featuredmedia': item.thumbnail ? [{ source_url: item.thumbnail }] : [] },
+                                link: item.link,
+                            }))
+                        };
+                        console.log('[noticias] Cargado desde RSS2JSON proxy');
                     }
                 }
-            } catch {}
+            } catch (rssError) {
+                console.warn('RSS proxy falló:', rssError);
+            }
         }
         
-        // 5. Fallback: localStorage cache
+        // 3. Fallback: localStorage cache
         if (!noticiasData) {
             const cached = localStorage.getItem('informegaming_noticias');
             const cacheTime = localStorage.getItem('informegaming_noticias_time');
             if (cached && cacheTime && (Date.now() - Number(cacheTime)) < 24 * 60 * 60 * 1000) {
                 noticiasData = JSON.parse(cached);
+                console.log('[noticias] Usando caché localStorage');
             }
         }
         
@@ -115,6 +112,8 @@ function crearImagenNoticia(noticia) {
         imgUrl = media[0].source_url;
     } else if (noticia.image) {
         imgUrl = noticia.image;
+    } else if (noticia.thumbnail) {
+        imgUrl = noticia.thumbnail;
     }
     
     if (imgUrl && esUrlSegura(imgUrl)) {
@@ -152,7 +151,7 @@ function crearCardNoticia(noticia, index) {
     meta.className = 'card-meta';
     
     const spanFecha = document.createElement('span');
-    const fecha = parsearFecha(noticia.date || noticia.date_published);
+    const fecha = parsearFecha(noticia.date || noticia.date_published || noticia.pubDate);
     spanFecha.textContent = '📅 ' + (fecha ? fecha.toLocaleDateString('es-ES') : 'Sin fecha');
     meta.appendChild(spanFecha);
     

@@ -15,6 +15,17 @@ const PLATFORM_EMOJI = {
     'Multi': '🎮',
 };
 
+// Detectar base path automáticamente (para GitHub Pages: /informegaming/)
+function getBasePath() {
+    // En desarrollo (Vite): ''
+    // En GitHub Pages: '/informegaming'
+    const path = window.location.pathname;
+    const match = path.match(/^(\/[^\/]+)/);
+    return match ? match[1] : '';
+}
+
+const BASE_PATH = getBasePath();
+
 async function cargarJuegosGratis() {
     const grid = document.getElementById('gratisGrid');
     
@@ -22,21 +33,33 @@ async function cargarJuegosGratis() {
     grid.innerHTML = '<p style="color: #8899b0; text-align: center; width: 100%;">Cargando juegos gratis...</p>';
     
     try {
-        // 1. Intentar import estático (build-time con Vite)
         let juegosData = null;
+        
+        // 1. Fetch desde la ruta correcta (GitHub Pages: /informegaming/data/juegos.json)
+        const dataUrl = `${BASE_PATH}/data/juegos.json`;
         try {
-            // @ts-ignore - Vite resuelve esto en build
-            const modulo = await import('../../public/data/juegos.json');
-            juegosData = modulo.default || modulo;
-        } catch (importError) {
-            // 2. Fallback: fetch runtime (GitHub Pages, Netlify, etc.)
+            const resp = await fetch(dataUrl, { cache: 'no-store' });
+            if (resp.ok) {
+                juegosData = await resp.json();
+                console.log('[juegos] Cargado desde:', dataUrl);
+            }
+        } catch (fetchError) {
+            console.warn('Fetch desde repo falló:', fetchError);
+        }
+        
+        // 2. Fallback: Worker API (datos frescos del KV)
+        if (!juegosData) {
             try {
-                const resp = await fetch('/data/juegos.json', { cache: 'no-store' });
+                const resp = await fetch('https://informegaming-ingest.informegaming-ingest.workers.dev/games', { 
+                    cache: 'no-store',
+                    headers: { 'Accept': 'application/json' }
+                });
                 if (resp.ok) {
                     juegosData = await resp.json();
+                    console.log('[juegos] Cargado desde Worker API');
                 }
-            } catch (fetchError) {
-                console.warn('Fetch fallback failed:', fetchError);
+            } catch (workerError) {
+                console.warn('Worker API falló:', workerError);
             }
         }
         
