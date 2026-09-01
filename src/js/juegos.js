@@ -82,6 +82,8 @@ async function cargarJuegosGratis() {
         localStorage.setItem('informegaming_juegos_time', String(Date.now()));
         
         todosLosJuegos = juegosData.games;
+        // Expose on window for SEO JSON-LD
+        window.todosLosJuegos = todosLosJuegos;
         mostrarJuegos(filtroActualJuegos);
         mostrarHistorial();
         
@@ -164,13 +166,15 @@ function crearCardJuego(juego, index) {
     // Imagen del juego
     const divImg = document.createElement('div');
     divImg.className = 'card-img';
-    divImg.setAttribute('aria-hidden', 'true');
     if (juego.imageUrl && esUrlSegura(juego.imageUrl)) {
         divImg.style.backgroundImage = `url("${juego.imageUrl}")`;
         divImg.style.backgroundSize = 'cover';
         divImg.style.backgroundPosition = 'center';
         divImg.textContent = '';
+        divImg.setAttribute('role', 'img');
+        divImg.setAttribute('aria-label', `${htmlATexto(juego.title)} - Imagen del juego gratis en ${plataforma}`);
     } else {
+        divImg.setAttribute('aria-hidden', 'true');
         divImg.textContent = emoji;
     }
     card.appendChild(divImg);
@@ -294,8 +298,12 @@ function setupFiltrosJuegos() {
     
     btns.forEach(btn => {
         btn.addEventListener('click', () => {
-            btns.forEach(b => b.classList.remove('active'));
+            btns.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
             filtroActualJuegos = btn.dataset.filter;
             mostrarJuegos(filtroActualJuegos);
         });

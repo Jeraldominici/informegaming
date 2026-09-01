@@ -40,6 +40,30 @@ export interface IngestOutput {
   games: GameFree[];
 }
 
+/**
+ * News Article schema (Markdown-based)
+ */
+export interface NewsArticle {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  date: string;
+  image?: string;
+  url?: string;
+  categories: string[];
+  tags: string[];
+  author?: string;
+  source: 'markdown';
+  raw: Record<string, unknown>;
+}
+
+export interface NewsOutput {
+  generatedAt: string;
+  version: string;
+  noticias: NewsArticle[];
+}
+
 export interface Env {
   KV_NAMESPACE: KVNamespace;
   PARSE_API_KEY?: string;
@@ -86,6 +110,22 @@ export interface XboxFreePlayDay {
   ProductUrl: string;
   ImageUrl?: string;
   Description?: string;
+}
+
+// Health check types
+export interface HealthCheckResult {
+  name: string;
+  status: 'ok' | 'degraded' | 'down';
+  message?: string;
+  durationMs: number;
+}
+
+export interface HealthOutput {
+  status: 'ok' | 'degraded' | 'down';
+  timestamp: string;
+  version: string;
+  checks: Record<string, HealthCheckResult>;
+  lastIngest?: string;
 }
 
 export interface NormalizedGame extends Omit<GameFree, 'raw'> {

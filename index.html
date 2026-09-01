@@ -3,8 +3,41 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- ===== SEO META TAGS (Base - Enhanced by seo.js per section) ===== -->
     <title>informegaming - Noticias y juegos gratis</title>
-    <!-- Enlazar el CSS -->
+    <meta name="description" content="Tu dosis diaria de gaming: noticias, lanzamientos y los mejores juegos gratis de la semana en Epic, Steam, Xbox, PlayStation y Nintendo." />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- ===== OPEN GRAPH ===== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="informegaming" />
+    <meta property="og:title" content="informegaming - Noticias y juegos gratis" />
+    <meta property="og:description" content="Noticias, lanzamientos y los mejores juegos gratis de la semana." />
+    <meta property="og:image" content="https://jeral.github.io/informegaming/og-image.png" />
+    <meta property="og:url" content="https://jeral.github.io/informegaming/" />
+    <meta property="og:locale" content="es_ES" />
+    
+    <!-- ===== TWITTER CARD ===== -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@informegaming" />
+    <meta name="twitter:title" content="informegaming - Noticias y juegos gratis" />
+    <meta name="twitter:description" content="Noticias, lanzamientos y los mejores juegos gratis de la semana." />
+    <meta name="twitter:image" content="https://jeral.github.io/informegaming/og-image.png" />
+    
+    <!-- ===== JSON-LD STRUCTURED DATA (Injected by seo.js) ===== -->
+    <script id="json-ld" type="application/ld+json"></script>
+    
+    <!-- ===== SECURITY: CSP Meta (Defense in depth) ===== -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://informegaming-ingest.informegaming-ingest.workers.dev https://www.gamerpower.com https://api.parse.bot https://reco-public.rec.mp.microsoft.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+    
+    <!-- ===== FAVICON / ICONS ===== -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- ===== ENLACE CSS ===== -->
     <link rel="stylesheet" href="src/css/style.css" />
 </head>
 <body>
@@ -12,9 +45,10 @@
     <!-- ===== CABECERA ===== -->
     <header>
         <div class="container header-inner">
+            <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
             <div class="logo">🎮 <span>informegaming</span></div>
             <nav>
-                <a href="#noticias" class="active">Noticias</a>
+                <a href="#noticias" class="active" aria-current="page">Noticias</a>
                 <a href="#gratis">Juegos Gratis</a>
                 <a href="#historial">Historial</a>
             </nav>
@@ -22,60 +56,60 @@
     </header>
 
     <!-- ===== HERO / BANNER ===== -->
-    <section class="hero">
+    <section id="main-content" class="hero" aria-labelledby="hero-title">
         <div class="container">
-            <h1>Tu dosis diaria de <span>gaming</span></h1>
+            <h1 id="hero-title">Tu dosis diaria de <span>gaming</span></h1>
             <p>Noticias, lanzamientos y los mejores juegos gratis de la semana.</p>
             <a href="#gratis" class="btn">Ver juegos gratis →</a>
         </div>
     </section>
 
     <!-- ===== SECCIÓN NOTICIAS ===== -->
-    <section id="noticias" class="container">
-        <div class="section-title"><span>📰</span> Últimas Noticias</div>
-        <!-- Filtros -->
-        <div class="filters" id="noticiasFiltros">
-            <button class="filter-btn active" data-filter="all">Todas</button>
-            <button class="filter-btn" data-filter="PC">PC</button>
-            <button class="filter-btn" data-filter="PS">PS</button>
-            <button class="filter-btn" data-filter="Xbox">Xbox</button>
-            <button class="filter-btn" data-filter="Nintendo">Nintendo</button>
+    <section id="noticias" class="container" aria-labelledby="noticias-title">
+        <h2 id="noticias-title" class="section-title"><span aria-hidden="true">📰</span> Últimas Noticias</h2>
+        <!-- Filtros con ARIA -->
+        <div class="filters" id="noticiasFiltros" role="tablist" aria-label="Filtrar noticias por plataforma">
+            <button class="filter-btn active" role="tab" aria-selected="true" aria-controls="panel-noticias-all" data-filter="all" id="tab-noticias-all">Todas</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-noticias-PC" data-filter="PC" id="tab-noticias-PC">PC</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-noticias-PS" data-filter="PS" id="tab-noticias-PS">PS</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-noticias-Xbox" data-filter="Xbox" id="tab-noticias-Xbox">Xbox</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-noticias-Nintendo" data-filter="Nintendo" id="tab-noticias-Nintendo">Nintendo</button>
         </div>
         <!-- Grid donde se cargarán las noticias -->
-        <div class="grid" id="noticiasGrid">
+        <div class="grid" id="noticiasGrid" role="tabpanel" aria-labelledby="tab-noticias-all" id="panel-noticias-all">
             <p style="color: #8899b0; text-align: center; width: 100%;">Cargando noticias...</p>
         </div>
     </section>
 
     <!-- ===== SECCIÓN JUEGOS GRATIS ===== -->
-    <section id="gratis" class="container">
-        <div class="section-title"><span>🎁</span> Juegos gratis de la semana</div>
-        <!-- Filtros -->
-        <div class="filters" id="gratisFiltros">
-            <button class="filter-btn active" data-filter="all">Todas</button>
-            <button class="filter-btn" data-filter="Epic">Epic</button>
-            <button class="filter-btn" data-filter="Steam">Steam</button>
-            <button class="filter-btn" data-filter="Xbox">Xbox</button>
-            <button class="filter-btn" data-filter="PS">PS</button>
-            <button class="filter-btn" data-filter="Nintendo">Nintendo</button>
+    <section id="gratis" class="container" aria-labelledby="gratis-title">
+        <h2 id="gratis-title" class="section-title"><span aria-hidden="true">🎁</span> Juegos gratis de la semana</h2>
+        <!-- Filtros con ARIA -->
+        <div class="filters" id="gratisFiltros" role="tablist" aria-label="Filtrar juegos gratis por plataforma">
+            <button class="filter-btn active" role="tab" aria-selected="true" aria-controls="panel-gratis-all" data-filter="all" id="tab-gratis-all">Todas</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Epic" data-filter="Epic" id="tab-gratis-Epic">Epic</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Steam" data-filter="Steam" id="tab-gratis-Steam">Steam</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Xbox" data-filter="Xbox" id="tab-gratis-Xbox">Xbox</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-PS" data-filter="PS" id="tab-gratis-PS">PS</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Nintendo" data-filter="Nintendo" id="tab-gratis-Nintendo">Nintendo</button>
         </div>
         <!-- Grid donde se cargarán los juegos -->
-        <div class="grid" id="gratisGrid">
+        <div class="grid" id="gratisGrid" role="tabpanel" aria-labelledby="tab-gratis-all" id="panel-gratis-all">
             <p style="color: #8899b0; text-align: center; width: 100%;">Cargando juegos...</p>
         </div>
     </section>
 
-    <!-- ===== SECCIÓN HISTORIAL (estático por ahora) ===== -->
-    <section id="historial" class="container">
-        <div class="section-title"><span>📜</span> Historial de juegos expirados</div>
+    <!-- ===== SECCIÓN HISTORIAL ===== -->
+    <section id="historial" class="container" aria-labelledby="historial-title">
+        <h2 id="historial-title" class="section-title"><span aria-hidden="true">📜</span> Historial de juegos expirados</h2>
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th>Juego</th>
-                        <th>Plataforma</th>
-                        <th>Fecha de expiración</th>
-                        <th>Estado</th>
+                        <th scope="col">Juego</th>
+                        <th scope="col">Plataforma</th>
+                        <th scope="col">Fecha de expiración</th>
+                        <th scope="col">Estado</th>
                     </tr>
                 </thead>
                 <tbody id="historialBody">
@@ -95,6 +129,7 @@
     <!-- ===== CARGAR LOS SCRIPTS ===== -->
     <script type="module" src="src/js/config.js"></script>
     <script type="module" src="src/js/utils.js"></script>
+    <script type="module" src="src/js/seo.js"></script>
     <script type="module" src="src/js/noticias.js"></script>
     <script type="module" src="src/js/juegos.js"></script>
 

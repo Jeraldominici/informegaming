@@ -1,65 +1,173 @@
 /**
- * Main Cloudflare Worker for daily game data ingestion
- * Fetches from multiple sources, normalizes, deduplicates, writes to KV
+ * Main Cloudflare Worker for informegaming
+ * - Daily game data ingestion (Epic, GamerPower, Xbox)
+ * - Noticias endpoint (Markdown-based, KV-backed)
+ * - Health checks with dependency verification
+ * - Rate limiting (KV-backed sliding window)
+ * - Security headers (CSP, X-Frame-Options, etc.)
+ * - CORS restrictive
  */
 
 import { Router } from 'itty-router';
-import type { Env, IngestOutput, GameFree } from './types';
+import type { 
+  Env, 
+  IngestOutput, 
+  GameFree, 
+  NewsOutput, 
+  HealthOutput 
+} from './types';
 import { fetchGamerPower } from './sources/gamerpower';
 import { fetchEpicGames } from './sources/epic';
 import { fetchXboxFreePlayDays } from './sources/xbox';
+import { handleGetNoticias, handlePostNoticias } from './sources/noticias';
 import { deduplicateGames } from './utils/normalize';
+import { checkRateLimit, addRateLimitHeaders, RATE_LIMIT_CONFIGS } from './middleware/rateLimit';
+import { 
+  applySecurityHeaders, 
+  handleCORSPreflight, 
+  getCORSHeaders,
+  CSP_POLICY 
+} from './middleware/securityHeaders';
+import { runHealthChecks, getHealthStatusCode } from './health';
 
 const router = Router<Request, [Env, ExecutionContext]>();
 
-// Health check endpoint
-router.get('/health', () => new Response(JSON.stringify({ 
-  status: 'ok', 
-  timestamp: new Date().toISOString(),
-  version: '1.0.0'
-}), {
-  headers: { 'Content-Type': 'application/json' },
-}));
+// ============================================
+// MIDDLEWARE: Security Headers + CORS
+// ============================================
 
-// Manual trigger endpoint
-router.post('/ingest', async (request, env) => {
-  const result = await runIngest(env);
-  return new Response(JSON.stringify(result), {
+// Handle OPTIONS preflight globally
+router.options('*', (request) => handleCORSPreflight(request));
+
+// Apply security headers to all responses
+const withSecurity = (response: Response, request: Request) => 
+  applySecurityHeaders(response, request);
+
+// ============================================
+// MIDDLEWARE: Rate Limiting
+// ============================================
+
+async function withRateLimit(request: Request, env: Env, next: () => Promise<Response>): Promise<Response> {
+  const url = new URL(request.url);
+  const config = RATE_LIMIT_CONFIGS[url.pathname] || {};
+  
+  const rateLimitResponse = await checkRateLimit(request, env, config);
+  if (rateLimitResponse) {
+    return applySecurityHeaders(rateLimitResponse, request);
+  }
+  
+  const response = await next();
+  return addRateLimitHeaders(response, request, env, config);
+}
+
+// ============================================
+// ROUTES
+// ============================================
+
+// Health check endpoint (extended)
+router.get('/health', async (request, env) => {
+  const health = await runHealthChecks(env);
+  const statusCode = getHealthStatusCode(health.status);
+  
+  const response = new Response(JSON.stringify(health, null, 2), {
+    status: statusCode,
     headers: { 'Content-Type': 'application/json' },
   });
+  
+  return withSecurity(response, request);
+});
+
+// Noticias endpoints
+router.get('/noticias', async (request, env) => {
+  const noticias = await handleGetNoticias(env);
+  
+  const response = new Response(JSON.stringify(noticias, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+router.post('/noticias', async (request, env) => {
+  const noticias = await handlePostNoticias(env);
+  
+  const response = new Response(JSON.stringify(noticias, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+// Manual trigger endpoint for games ingest
+router.post('/ingest', async (request, env) => {
+  const result = await runIngest(env);
+  
+  const response = new Response(JSON.stringify(result, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
 });
 
 // GET trigger (for cron via HTTP)
 router.get('/ingest', async (request, env) => {
   const result = await runIngest(env);
-  return new Response(JSON.stringify(result), {
+  
+  const response = new Response(JSON.stringify(result, null, 2), {
     headers: { 'Content-Type': 'application/json' },
   });
+  
+  return withSecurity(response, request);
 });
 
 // Get current games from KV
 router.get('/games', async (request, env) => {
   const data = await env.KV_NAMESPACE.get('juegos.json', 'json');
+  
+  let response: Response;
   if (!data) {
-    return new Response(JSON.stringify({ 
+    response = new Response(JSON.stringify({ 
       generatedAt: new Date().toISOString(),
       version: '1.0',
       games: [],
       message: 'No data yet. Run /ingest first.'
-    }), {
+    }, null, 2), {
       headers: { 'Content-Type': 'application/json' },
       status: 404,
     });
+  } else {
+    response = new Response(JSON.stringify(data, null, 2), {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-  return new Response(JSON.stringify(data), {
-    headers: { 'Content-Type': 'application/json' },
-  });
+  
+  return withSecurity(response, request);
+});
+
+// CSP violation report endpoint
+router.post('/csp-report', async (request, env) => {
+  try {
+    const report = await request.json();
+    console.warn('[CSP Violation]', JSON.stringify(report, null, 2));
+  } catch (error) {
+    console.error('[CSP] Failed to parse report:', error);
+  }
+  return new Response('OK', { status: 204 });
 });
 
 // 404 fallback
-router.all('*', () => new Response('Not Found', { status: 404 }));
+router.all('*', (request) => {
+  const response = new Response(JSON.stringify({ error: 'Not Found' }), { 
+    status: 404,
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return withSecurity(response, request);
+});
 
-// Main ingest logic
+// ============================================
+// MAIN INGEST LOGIC (Games)
+// ============================================
+
 async function runIngest(env: Env): Promise<IngestOutput & { stats: Record<string, number> }> {
   const startedAt = new Date();
   console.log(`[Ingest] Starting at ${startedAt.toISOString()}`);
@@ -186,14 +294,21 @@ async function commitToGitHub(env: Env, output: IngestOutput): Promise<void> {
   }
 }
 
-// Scheduled handler (daily cron)
+// ============================================
+// SCHEDULED HANDLER (Daily Cron)
+// ============================================
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    return router.handle(request, env, ctx);
+    // Apply rate limiting middleware to all routes
+    return withRateLimit(request, env, () => router.handle(request, env, ctx));
   },
   
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
-    console.log('[Scheduled] Daily ingest triggered', { cron: event.cron, scheduledTime: new Date(event.scheduledTime).toISOString() });
+    console.log('[Scheduled] Daily ingest triggered', { 
+      cron: event.cron, 
+      scheduledTime: new Date(event.scheduledTime).toISOString() 
+    });
     
     // Run ingest in background
     ctx.waitUntil(runIngest(env).catch(err => {

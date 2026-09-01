@@ -333,3 +333,87 @@ footer span {
         transform: translateY(0);
     }
 }
+
+/* ===== ACCESSIBILITY: FOCUS VISIBLE ===== */
+/* Clear, high-contrast focus indicator for all interactive elements */
+:focus-visible {
+    outline: 3px solid #00ffcc !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 5px rgba(0, 255, 204, 0.3) !important;
+}
+
+/* Specific focus styles for filter buttons (tab role) */
+.filter-btn:focus-visible,
+[role="tab"]:focus-visible {
+    outline: 3px solid #00ffcc !important;
+    outline-offset: 3px !important;
+    border-radius: 30px;
+    z-index: 10;
+}
+
+/* Focus for links and buttons */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.btn-small:focus-visible {
+    outline: 3px solid #00ffcc !important;
+    outline-offset: 2px !important;
+    border-radius: inherit;
+}
+
+/* Focus for table cells and interactive elements in historial */
+table td:focus-visible,
+table th:focus-visible {
+    outline: 3px solid #00ffcc !important;
+    outline-offset: -3px !important;
+}
+
+/* Skip link for keyboard navigation (hidden until focused) */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ffcc;
+    color: #0b0e14;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    z-index: 1000;
+    text-decoration: none;
+    transition: top 0.3s;
+}
+.skip-link:focus {
+    top: 10px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --focus-color: #ffff00;
+    }
+    :focus-visible {
+        outline-color: #ffff00 !important;
+        box-shadow: 0 0 0 5px rgba(255, 255, 0, 0.5) !important;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .fade-in {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+    .card:hover {
+        transform: none;
+    }
+    .btn:hover,
+    .btn-small:hover {
+        transform: none;
+    }
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

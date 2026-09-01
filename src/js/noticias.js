@@ -34,30 +34,19 @@ async function cargarNoticias() {
             console.warn('Fetch repo falló:', fetchError);
         }
         
-        // 2. Fallback: WordPress JSON Feed (con proxy CORS si es necesario)
+        // 2. Fallback: Worker API para noticias (si existe endpoint)
         if (!noticiasData) {
             try {
-                // Usar textise dot iitty como proxy CORS gratuito
-                const feedUrl = 'https://rss2json.com/api.json?rss_url=https://informegaming.gt.tc/feed/';
-                const resp = await fetch(feedUrl, { cache: 'no-store' });
+                const resp = await fetch('https://informegaming-ingest.informegaming-ingest.workers.dev/noticias', { 
+                    cache: 'no-store',
+                    headers: { 'Accept': 'application/json' }
+                });
                 if (resp.ok) {
-                    const feed = await resp.json();
-                    if (feed.items && Array.isArray(feed.items)) {
-                        noticiasData = { 
-                            noticias: feed.items.map(item => ({
-                                id: item.guid || item.link,
-                                title: { rendered: item.title },
-                                excerpt: { rendered: item.content || item.description || '' },
-                                date: item.pubDate,
-                                _embedded: { 'wp:featuredmedia': item.thumbnail ? [{ source_url: item.thumbnail }] : [] },
-                                link: item.link,
-                            }))
-                        };
-                        console.log('[noticias] Cargado desde RSS2JSON proxy');
-                    }
+                    noticiasData = await resp.json();
+                    console.log('[noticias] Cargado desde Worker API');
                 }
-            } catch (rssError) {
-                console.warn('RSS proxy falló:', rssError);
+            } catch (workerError) {
+                console.warn('Worker noticias falló:', workerError);
             }
         }
         
@@ -80,6 +69,8 @@ async function cargarNoticias() {
         localStorage.setItem('informegaming_noticias_time', String(Date.now()));
         
         todasLasNoticias = noticiasData.noticias;
+        // Expose on window for SEO JSON-LD
+        window.todasLasNoticias = todasLasNoticias;
         mostrarNoticias(filtroActual);
         
     } catch (error) {
@@ -185,8 +176,12 @@ function setupFiltrosNoticias() {
     
     btns.forEach(btn => {
         btn.addEventListener('click', () => {
-            btns.forEach(b => b.classList.remove('active'));
+            btns.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
             filtroActual = btn.dataset.filter;
             mostrarNoticias(filtroActual);
         });

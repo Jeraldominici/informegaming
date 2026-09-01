@@ -1,0 +1,11 @@
+# informegaming - robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://jeral.github.io/informegaming/sitemap.xml
+
+# Disallow admin/private paths (none in static site)
+# Disallow: /worker/
+# Disallow: /scripts/
+# Disallow: /content/

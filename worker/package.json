@@ -7,13 +7,17 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "build:noticias": "node ../scripts/build-noticias.cjs"
   },
   "dependencies": {
     "itty-router": "^4.0.23"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240821.0",
+    "@types/node": "^22.0.0",
+    "happy-dom": "^15.11.7",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5",
     "wrangler": "^3.73.0"
