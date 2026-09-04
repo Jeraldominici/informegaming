@@ -19,13 +19,10 @@
             --accent-glow: rgba(0, 255, 204, 0.4);
             --danger: #ff5f57;
             --warning: #f59e0b;
+            --info: #3b82f6;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', sans-serif;
@@ -35,24 +32,11 @@
             line-height: 1.6;
         }
         
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Orbitron', sans-serif;
-        }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Orbitron', sans-serif; }
         
-        a {
-            text-decoration: none;
-            color: inherit;
-            transition: color 0.3s ease;
-        }
-        
-        ul {
-            list-style: none;
-        }
-        
-        img {
-            max-width: 100%;
-            height: auto;
-        }
+        a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; }
         
         /* Navigation */
         nav {
@@ -114,130 +98,152 @@
             transition: width 0.3s ease;
         }
         
-        .nav-links a:hover::after {
-            width: 100%;
-        }
+        .nav-links a:hover::after { width: 100%; }
         
-        /* Sections */
-        .section {
-            padding: 8rem 2rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 900;
-            text-align: center;
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
             margin-bottom: 2rem;
-            letter-spacing: 3px;
+            transition: color 0.3s ease;
+        }
+        
+        .back-btn:hover { color: var(--accent); }
+        
+        /* Hero */
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
             background: linear-gradient(135deg, var(--accent), #00ccaa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
-        /* Home page specific */
-        .hero {
-            min-height: 60vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        
-        .hero h2 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
         .hero p {
             color: var(--text-secondary);
-            font-size: 1.2rem;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
         }
         
-        /* Game cards */
-        .games-grid {
+        /* Sections */
+        .section {
+            padding: 6rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+        }
+        
+        /* Cards grid */
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
         
-        .game-card {
+        .feature-card {
             background: var(--bg-card);
             border: 1px solid var(--bg-hover);
             border-radius: 8px;
-            padding: 1.5rem;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
-        .game-card:hover {
+        .feature-card:hover {
             transform: translateY(-4px);
-            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(0, 255, 204, 0.15);
         }
         
-        .game-card h3 {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
         }
         
-        .game-card p {
-            font-size: 0.8rem;
+        .feature-card p {
             color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .feature-card .icon {
+            width: 48px;
+            height: 48px;
             margin-bottom: 1rem;
         }
         
-        .game-card .tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+        .feature-card.gaming .icon { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .feature-card.news .icon { background: linear-gradient(135deg, #00ffcc, #00ccaa); }
+        .feature-card.f2p .icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .feature-card.gta .icon { background: linear-gradient(135deg, #ff6b6b, #7c3aed); }
+        
+        .feature-card .icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
         }
         
-        .tag {
-            background: var(--accent-glow);
-            color: var(--accent);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-        }
-        
-        /* Footer */
-        footer {
+        /* Stats */
+        .stats {
             background: var(--bg-card);
+            border: 1px solid var(--bg-hover);
+            border-radius: 8px;
             padding: 2rem;
             text-align: center;
-            margin-top: 4rem;
-            border-top: 1px solid var(--bg-hover);
+            margin-top: 3rem;
         }
         
-        .footer-text {
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
             color: var(--text-secondary);
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            .section-title {
-                font-size: 2rem;
-            }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+            .section { padding: 4rem 1rem 1rem; }
         }
     </style>
 </head>
 <body>
+
     <nav>
         <div class="nav-container">
             <div class="logo" onclick="window.location='/'"
-     style="cursor: pointer; display: inline-block; align-items: center;">
-    <img src="/informegaming_logo.svg" 
-         alt="Informe Gaming" 
-         style="vertical-align: middle; width: 32px; height: 32px;">
-    <span>Informe Gaming</span>
-</div>
+                 style="cursor: pointer; display: inline-block; align-items: center;">
+                <img src="/informegaming_logo.svg" 
+                     alt="Informe Gaming" 
+                     style="vertical-align: middle; width: 32px; height: 32px;">
+                <span>Informe Gaming</span>
+            </div>
             <ul class="nav-links">
                 <li><a href="/hoy">Hoy</a></li>
                 <li><a href="/semana">Esta Semana</a></li>
@@ -249,84 +255,91 @@
     </nav>
     
     <main>
-        <section class="section" id="home">
-            <h1 class="section-title">Bienvenido a Informe Gaming</h1>
-            <div class="hero">
-                <h2>Noticias y Juegos Gratos <span>GTA 6</span> disponible</h2>
-                <p>Tu fuente diaria de noticias gaming y juegos gratis</p>
-            </div>
+        <section class="hero">
+            <h1>Informe Gaming</h1>
+            <p>Tu dosis diaria de gaming: noticias, lanzamientos y los mejores juegos gratis</p>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Lo que encontrarás aquí</h2>
             
-            <div class="games-grid">
-                <div class="game-card">
-                    <h3>GTA 6 - Trailers Oficiales</h3>
-                    <p>Latest trailers and gameplay reveals</p>
-                    <div class="tags">
-                        <span class="tag">GTA 6</span>
-                        <span class="tag">Rockstar</span>
+            <div class="features-grid">
+                <div class="feature-card gaming">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        </svg>
                     </div>
+                    <h3>Juegos Gratis</h3>
+                    <p>Descubre juegos gratis de hoy, esta semana y siempre (F2P)</p>
                 </div>
-                <div class="game-card">
-                    <h3>Juegos Gratis Hoy</h3>
-                    <p> Juegos que empiezan/terminan hoy</p>
-                    <div class="tags">
-                        <span class="tag">Free</span>
-                        <span class="tag">Today</span>
+                <div class="feature-card news">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6v2h8v14h6v-14h8v-2h-6v2zm10-6v14h-6v-14h6zm-7 7h2v12h-2v-12zm-4-4h2v6h-2v-6zm4 4v-2h6v2h-6zM3 3v2h18v1H3V3zm3 6h6v10H3V9zm6 6h2v4H3v-4zm3.5-3c-.83 0-1.5.95-1.5 1.5s.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S10.83 6 10 6z"/>
+                        </svg>
                     </div>
+                    <h3>Noticias Gaming</h3>
+                    <p>Últimas noticias, rumores y actualizaciones del mundo videjuegos</p>
                 </div>
-                <div class="game-card">
-                    <h3>Juegos Gratis Esta Semana</h3>
-                    <p>Selección semanal de F2P</p>
-                    <div class="tags">
-                        <span class="tag">Free</span>
-                        <span class="tag">Weekly</span>
+                <div class="feature-card f2p">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8z"/>
+                        </svg>
                     </div>
-                </div>
-                <div class="game-card">
                     <h3>Siempre Gratis (F2P)</h3>
-                    <p>Juegos free-to-play permanentes</p>
-                    <div class="tags">
-                        <span class="tag">Free</span>
-                        <span class="tag">F2P</span>
-                    </div>
+                    <p>Juegos free-to-play permanentes sin costo</p>
                 </div>
+                <div class="feature-card gta">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        </svg>
+                    </div>
+                    <h3>GTA 6</h3>
+                    <p>Toda la información sobre Grand Theft Auto VI</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" style="background: var(--bg-card);">
+            <div class="stats">
+                <div class="stat-number" id="stat-games">0</div>
+                <div class="stat-label">Juegos en base de datos</div>
+                <div class="stat-number" id="stat-news" style="color: var(--accent);">0</div>
+                <div class="stat-label">Noticias publicadas</div>
             </div>
         </section>
     </main>
     
     <footer>
-        <div class="footer-text">
-            Informe Gaming - Datos en tiempo real | GTA 6 en desarrollo
+        <div class="container">
+            <p>© 2026 Informe Gaming - Hecho con ❤️ para la comunidad gamer</p>
         </div>
     </footer>
     
     <script type="module" src="/src/js/router.js"></script>
     <script>
-        // Initialize router for hash fallback
         document.addEventListener('DOMContentLoaded', () => {
-            // Si hay hash, usar router; si no, navegación normal
-            const links = document.querySelectorAll('nav a[href^="#"]');
-            links.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const hash = link.getAttribute('href');
-                    // Navegación simple - cambiar contenido
-                    document.querySelectorAll('.section').forEach(section => {
-                        section.style.display = 'none';
-                    });
-                    const targetId = hash.replace('#', '');
-                    const target = document.getElementById(targetId);
-                    if (target) {
-                        target.style.display = '';
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
+            // Simulated stats update
+            const gamesEl = document.getElementById('stat-games');
+            const newsEl = document.getElementById('stat-news');
             
-            // Show home by default
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById('home').style.display = '';
+            // Contador animado
+            let gamesCount = 0;
+            let newsCount = 0;
+            
+            const updateStats = () => {
+                gamesCount = Math.min(gamesCount + 1, 487);
+                newsCount = Math.min(newsCount + 1, 234);
+                gamesEl.textContent = gamesCount.toLocaleString();
+                newsEl.textContent = newsCount.toLocaleString();
+            };
+            
+            // Update every 5 seconds
+            setInterval(updateStats, 5000);
+            updateStats();
         });
     </script>
 </body>
