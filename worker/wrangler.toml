@@ -30,5 +30,4 @@ upload_source_maps = true
 [vars]
 SUPABASE_URL=https://ihrxlxgxpcnkgymmncwz.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_bjw7vvRaSxNv-wAcjYvSVA_nOaixqCY
-SUPABASE_SECRET_KEY=sb_secret_Seg6Tr6DzbsuXh0_ortJ8A_di_mli_T
 SUPABASE_JWKS_URL=https://ihrxlxgxpcnkgymmncwz.supabase.co/auth/v1/.well-known/jwks.json
