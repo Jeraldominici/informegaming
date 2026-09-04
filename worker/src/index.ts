@@ -9,8 +9,31 @@
  * - CORS restrictive
  */
 
-// Standalone levenshtein function to avoid TypeScript narrowing issues in nested functions
-function levenshteinDistance(a: string, b: string): number {
+// Supabase client setup
+const supabaseUrl = env.SUPABASE_URL;
+const supabaseAnonKey = env.SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey) 
+  : null;
+
+// Forums endpoints - userId comes from request or is generated client-side
+// We'll accept userId as a query param or use a default anonymous pattern
+// The actual auth (email/pass) will be handled on the client side with Supabase JS
+
+// Helper to get user ID from request or generate anonymous
+function getUserIdFromRequest(request: Request, env: Env): string {
+  // Try to get from query param first
+  const url = new URL(request.url);
+  const userId = url.searchParams.get('userId');
+  if (userId) return userId;
+  
+  // Try header
+  const authHeader = request.headers.get('X-User-Id');
+  if (authHeader) return authHeader;
+  
+  // Generate anonymous ID (client will handle actual auth later)
+  return crypto.randomUUID ? crypto.randomUUID() : 'anon-' + Date.now();
+}
   const aStr: string = a;
   const bStr: string = b;
   const lenA = aStr.length;
@@ -31,6 +54,8 @@ function levenshteinDistance(a: string, b: string): number {
 }
 
 import { Router } from 'itty-router';
+import { createClient } from '@supabase/supabase-js';
+
 import type { 
   Env, 
   IngestOutput, 
@@ -530,6 +555,374 @@ router.all('*', (request) => {
     status: 404,
     headers: { 'Content-Type': 'application/json' },
   });
+  return withSecurity(response, request);
+});
+
+// ============================================
+// ROUTES: Foro/Chat Sección (NUEVO - Supabase)
+// ============================================
+
+// GET /forums/categorías - Obtener todas las categorías
+router.get('/forums/categories', async (request, env) => {
+  if (!supabase) {
+    const response = new Response(JSON.stringify({ error: 'Supabase not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const { data, error } = await supabase.from('categories').select('*').is('is_active', true).order('sort_order');
+  
+  if (error) {
+    const response = new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const response = new Response(JSON.stringify({ categories: data }, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+// GET /forums/threads - Obtener hilos con paginado y filtros
+router.get('/forums/threads', async (request, env) => {
+  if (!supabase) {
+    const response = new Response(JSON.stringify({ error: 'Supabase not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const url = new URL(request.url);
+  const categoryId = url.searchParams.get('categoryId') || '';
+  const limit = parseInt(url.searchParams.get('limit') || '20', 10);
+  const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+  const orderBy = url.searchParams.get('orderBy') || 'last_activity_at';
+  const ascending = url.searchParams.get('ascending') === 'false' ? false : true;
+  
+  let query = supabase.from('threads').select('*, profiles!threads_author_id_fkey(username, display_name)', { count: 'exact' });
+  
+  if (categoryId) {
+    query = query.eq('category_id', categoryId);
+  }
+  
+  query = query.order(orderBy, { ascending });
+  
+  const { data, error, count } = await query.range(offset, offset + limit - 1);
+  
+  if (error) {
+    const response = new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const response = new Response(JSON.stringify({ 
+    threads: data,
+    total: count || 0,
+    hasMore: (offset || 0) + (limit || 20) < (count || 0),
+  }, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+// GET /forums/threads/:id - Obtener un hilo con sus respuestas
+router.get('/forums/threads/:id', async (request, env) => {
+  if (!supabase) {
+    const response = new Response(JSON.stringify({ error: 'Supabase not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const threadId = request.path.split('/').pop();
+  
+  // Obtener hilo con autor
+  const { data: thread, error: threadError } = await supabase.from('threads')
+    .select('*, profiles!threads_author_id_fkey(username, display_name)')
+    .eq('id', threadId)
+    .single();
+  
+  if (threadError) {
+    const response = new Response(JSON.stringify({ error: 'Thread not found' }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  // Obtener respuestas con autor y likes
+  const { data: replies, error: repliesError } = await supabase.from('replies')
+    .select('*, profiles!replies_author_id_fkey(username, display_name), reactions!replies_id_fkey(type, count)')
+    .eq('thread_id', threadId)
+    .order('created_at', { ascending: true });
+  
+  if (repliesError) {
+    const response = new Response(JSON.stringify({ error: repliesError.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  // Contar likes por reacción
+  let processedReplies = replies.map(reply => {
+    const reactionCounts = reply.reactions?.reduce((acc, r) => {
+      acc[r.type] = (acc[r.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>) || {};
+    
+    return {
+      ...reply,
+      reactionCounts,
+    };
+  });
+  
+  const response = new Response(JSON.stringify({ 
+    thread: thread,
+    replies: processedReplies,
+    replyCount: processedReplies.length,
+  }, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+// POST /forums/threads - Crear nuevo hilo
+router.post('/forums/threads', async (request, env) => {
+  if (!supabase) {
+    const response = new Response(JSON.stringify({ error: 'Supabase not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const body = await request.json();
+  const { title, content, categoryId, isSpoiler } = body;
+  const authorId = getUserIdFromRequest(request, env);
+  
+  if (!title || !categoryId) {
+    const response = new Response(JSON.stringify({ error: 'Title and category are required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const { data: thread, error: threadError } = await supabase.from('threads')
+    .insert({
+      title,
+      content,
+      category_id: categoryId,
+      author_id: authorId,
+      is_spoiler: !!isSpoiler,
+    })
+    .select('*, profiles!threads_author_id_fkey(username, display_name)')
+    .single();
+  
+  if (threadError) {
+    const response = new Response(JSON.stringify({ error: threadError.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  // Crear respuesta inicial (el post original)
+  const { error: replyError } = await supabase.from('replies')
+    .insert({
+      thread_id: thread.id,
+      author_id: authorId,
+      content,
+      is_solution: false,
+    });
+  
+  if (replyError) {
+    console.error('[Forums] Error creating initial reply:', replyError);
+  }
+  
+  const response = new Response(JSON.stringify({ 
+    thread,
+    message: 'Thread created successfully',
+  }, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+// POST /forums/replies - Crear respuesta a un hilo
+router.post('/forums/replies', async (request, env) => {
+  if (!supabase) {
+    const response = new Response(JSON.stringify({ error: 'Supabase not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const body = await request.json();
+  const { threadId, content, parentId, isSpoiler } = body;
+  const authorId = getUserIdFromRequest(request, env);
+  
+  if (!threadId || !content) {
+    const response = new Response(JSON.stringify({ error: 'Thread ID and content are required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const { data: reply, error: replyError } = await supabase.from('replies')
+    .insert({
+      thread_id: threadId,
+      author_id: authorId,
+      content,
+      parent_id: parentId,
+      is_spoiler: !!isSpoiler,
+    })
+    .select('*, profiles!replies_author_id_fkey(username, display_name)')
+    .single();
+  
+  if (replyError) {
+    const response = new Response(JSON.stringify({ error: replyError.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const response = new Response(JSON.stringify({ 
+    reply,
+    message: 'Reply created successfully',
+  }, null, 2), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+// PUT /forums/replies/:id - Like/reacción a una respuesta
+router.put('/forums/replies/:id/like', async (request, env) => {
+  if (!supabase) {
+    const response = new Response(JSON.stringify({ error: 'Supabase not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const replyId = request.path.split('/').pop();
+  const { type } = await request.json(); // type: 'like', 'dislike', 'heart', etc.
+  const userId = getUserIdFromRequest(request, env);
+  
+  if (!userId || !type) {
+    const response = new Response(JSON.stringify({ error: 'User ID and reaction type are required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  // Verificar si ya reaccionó
+  const { existing: existingReaction } = await supabase.from('reactions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('reply_id', replyId)
+    .single();
+  
+  let responseData;
+  
+  if (existingReaction) {
+    // Actualizar reacción existente
+    const { error: updateError } = await supabase.from('reactions')
+      .update({ type })
+      .eq('id', existingReaction.id);
+    
+    if (updateError) {
+      const response = new Response(JSON.stringify({ error: updateError.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      return withSecurity(response, request);
+    }
+    responseData = { type, updated: true };
+  } else {
+    // Crear nueva reacción
+    const { error: insertError } = await supabase.from('reactions')
+      .insert({
+        user_id: userId,
+        reply_id: replyId,
+        type,
+      });
+    
+    if (insertError) {
+      const response = new Response(JSON.stringify({ error: insertError.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      return withSecurity(response, request);
+    }
+    responseData = { type, new: true };
+  }
+  
+  const response = new Response(JSON.stringify(responseData), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
+  return withSecurity(response, request);
+});
+
+// DELETE /forums/replies/:id - Eliminar reacción
+router.delete('/forums/replies/:id/like', async (request, env) => {
+  if (!supabase) {
+    const response = new Response(JSON.stringify({ error: 'Supabase not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const replyId = request.path.split('/').pop();
+  const userId = getUserIdFromRequest(request, env);
+  
+  if (!userId) {
+    const response = new Response(JSON.stringify({ error: 'User ID required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const { error: deleteError } = await supabase.from('reactions')
+    .delete()
+    .eq('user_id', userId)
+    .eq('reply_id', replyId);
+  
+  if (deleteError) {
+    const response = new Response(JSON.stringify({ error: deleteError.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return withSecurity(response, request);
+  }
+  
+  const response = new Response(JSON.stringify({ deleted: true }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  
   return withSecurity(response, request);
 });
 

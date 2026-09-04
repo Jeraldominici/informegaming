@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Gaming - Juegos Gratis Hoy</title>
+    <link rel="stylesheet" href="/assets/index-DvL186bl.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-hover: #1a1a24;
+            --text-primary: #e0e0e8;
+            --text-secondary: #8888a0;
+            --accent: #00ffcc;
+            --accent-glow: rgba(0, 255, 204, 0.4);
+            --danger: #ff5f57;
+            --warning: #f59e0b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 { font-family: 'Orbitron', sans-serif; }
+        
+        a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; }
+        
+        /* Navigation */
+        nav {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-dark));
+            border-bottom: 1px solid var(--accent);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent), #00ccaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after { width: 100%; }
+        
+        /* Back button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            color: var(--accent);
+        }
+        
+        .back-btn:hover svg {
+            transform: rotate(180deg);
+        }
+        
+        /* Section */
+        .section {
+            padding: 8rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 2rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--accent), #00ccaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Games grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-hover);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+        
+        .game-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .game-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .game-card .tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        
+        /* Today filter info */
+        .today-info {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-hover);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .today-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .countdown {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .countdown-unit {
+            text-align: center;
+        }
+        
+        .countdown-value {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+        
+        .countdown-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+                <span>Informe Gaming</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/hoy">Hoy</a></li>
+                <li><a href="/semana">Esta Semana</a></li>
+                <li><a href="/siempre">Siempre Gratis</a></li>
+                <li><a href="/gta6">GTA 6</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <a href="/" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6-6 6"/>
+        </svg>
+        Volver al inicio
+    </a>
+    
+    <main>
+        <section class="section" id="hoy">
+            <h1 class="section-title">Juegos Gratis <span>Hoy</span></h1>
+            
+            <div class="today-info">
+                <p> Juegos que empiezan hoy y terminan hoy</p>
+                <div class="countdown">
+                    <div class="countdown-unit">
+                        <span class="countdown-value" id="countdown-days">00</span>
+                        <span class="countdown-label">días</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-value" id="countdown-hours">00</span>
+                        <span class="countdown-label">horas</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-value" id="countdown-minutes">00</span>
+                        <span class="countdown-label">min.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="games-grid">
+                <!-- Cards will be populated by JS -->
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-text">
+            Informe Gaming - Actualización cada hora
+        </div>
+    </footer>
+    
+    <script type="module" src="/src/js/router.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load games data and filter for "hoy"
+            fetch('/api/games?type=always')
+                .then(res => res.json())
+                .then(data => {
+                    const gamesGrid = document.querySelector('.games-grid');
+                    if (!gamesGrid) return;
+                    
+                    // Filter games with availabilityType 'today' or 'always'
+                    const allGames = data.games || [];
+                    const hoyGames = allGames.filter(g => 
+                        g.availabilityType === 'today' || g.availabilityType === 'always'
+                    ).slice(0, 6);
+                    
+                    if (hoyGames.length === 0) {
+                        gamesGrid.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">No hay juegos gratis hoy</p>';
+                        return;
+                    }
+                    
+                    gamesGrid.innerHTML = hoyGames.map(game => `
+                        <div class="game-card">
+                            <h3>${game.title}</h3>
+                            <p>${game.platform} • ${game.availabilityType}</p>
+                            <div class="tags">
+                                <span class="tag">${game.availabilityType}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(err => {
+                    console.error('Error loading games:', err);
+                    const gamesGrid = document.querySelector('.games-grid');
+                    if (gamesGrid) gamesGrid.innerHTML = '<p style="color: var(--text-secondary);">Error cargando juegos</p>';
+                });
+            
+            // Countdown timer
+            const now = new Date();
+            const midday = new Date();
+            midday.setHours(12, 0, 0, 0);
+            if (now > midday) {
+                midday.setDate(midday.getDate() + 1);
+            }
+            
+            const diff = midday - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            document.getElementById('countdown-days').textContent = String(days).padStart(2, '0');
+            document.getElementById('countdown-hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('countdown-minutes').textContent = String(minutes).padStart(2, '0');
+        });
+    </script>
+</body>
+</html>
