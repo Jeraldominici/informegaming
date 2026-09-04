@@ -4,7 +4,7 @@
  * Endpoint: get_free_games returns current + upcoming with dates
  */
 
-import type { Env, GameFree, EpicFreeGame, Source } from '../types';
+import type { Env, GameFree, EpicFreeGame, Source, AvailabilityType } from '../types';
 import { 
   generateId, 
   isGameActive,
@@ -13,7 +13,8 @@ import {
   truncateDescription,
   parseEpicDateRange,
   parseToISO,
-  normalizeType 
+  normalizeType,
+  classifyAvailability
 } from '../utils/normalize';
 
 const PARSE_EPIC_ENDPOINT = 'https://api.parse.bot/scraper/af5648f3-99a5-49a7-a148-2369345fc030/get_free_games';
@@ -74,6 +75,9 @@ export async function fetchEpicGames(env: Env): Promise<GameFree[]> {
       const isFreeNow = item.status === 'FREE NOW';
       const type = isFreeNow ? 'base_game' : 'base_game'; // Epic free games are base games
       
+      // Determine availability type
+      const availabilityType: AvailabilityType = classifyAvailability({ startsAt, endsAt });
+      
       const game: GameFree = {
         id: generateId('epic', item.title, 'Epic'),
         title: item.title.trim(),
@@ -84,8 +88,10 @@ export async function fetchEpicGames(env: Env): Promise<GameFree[]> {
         startsAt,
         endsAt,
         isActive: isFreeNow ? isGameActive(startsAt, endsAt) : false, // COMING SOON not active yet
+        availabilityType,
         type,
         source: 'epic',
+        tags: ['free', 'epic', availabilityType],
         raw: {
           status: item.status,
           offer_date_range: item.offer_date_range,

@@ -124,7 +124,7 @@ router.get('/games', async (request, env) => {
     games = games.filter(g => g.platform.toLowerCase() === platform.toLowerCase());
   }
   
-  // Filtrar por bÃƒÂºsqueda de texto
+  // Filtrar por bÃºsqueda de texto
   if (q) {
     const query = q.toLowerCase();
     games = games.filter(g => 
@@ -135,7 +135,7 @@ router.get('/games', async (request, env) => {
     );
   }
   
-  // PaginaciÃƒÂ³n
+  // PaginaciÃ³n
   const total = games.length;
   const filtered = games.slice(offset, offset + limit);
   
@@ -158,7 +158,7 @@ router.get('/games', async (request, env) => {
   return withSecurity(response2, request);
 });
 
-// GET /search - BÃƒÂºsqueda fuzzy con filtros
+// GET /search - BÃºsqueda fuzzy con filtros
 router.get('/search', async (request, env) => {
   const url = new URL(request.url);
   const q = url.searchParams.get('q') || '';
@@ -288,13 +288,13 @@ router.get('/games/always-free', async (request, env) => {
 // ROUTES: GTA 6 Section
 // ============================================
 
-// GET /gta6 - SecciÃƒÂ³n completa GTA 6
+// GET /gta6 - SecciÃ³n completa GTA 6
 router.get('/gta6', async (request, env) => {
   // Intentar leer de KV primero
   let gta6Data = await env.KV_NAMESPACE.get('gta6.json', 'json') as GTA6Output | null;
   
   if (!gta6Data || !gta6Data.noticias?.length) {
-    // Reconstruir si no existe o estÃƒÂ¡ vacÃƒÂ­o
+    // Reconstruir si no existe o estÃ¡ vacÃ­o
     const [noticias, videos, timeline] = await Promise.allSettled([
       fetchGTA6News(env),
       fetchGTA6Videos(env),
@@ -323,7 +323,7 @@ router.get('/gta6', async (request, env) => {
     }
   }
   
-  // Filtrar spoilers si no estÃƒÂ¡n habilitados (se hace en cliente via localStorage)
+  // Filtrar spoilers si no estÃ¡n habilitados (se hace en cliente via localStorage)
   const response: GTA6OutputType = {
     ...gta6Data!,
     spoilersEnabled: false, // Cliente maneja esto con localStorage
@@ -709,23 +709,4 @@ export default {
       console.error('[Scheduled] Ingest failed:', err);
     }));
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-};
 };

@@ -4,14 +4,15 @@
  * Based on research from xbox-store-api project
  */
 
-import type { Env, GameFree, XboxFreePlayDay, Source } from '../types';
+import type { Env, GameFree, XboxFreePlayDay, Source, AvailabilityType } from '../types';
 import { 
   generateId, 
   isGameActive,
   sanitizeUrl,
   sanitizeImageUrl,
   truncateDescription,
-  parseToISO 
+  parseToISO,
+  classifyAvailability
 } from '../utils/normalize';
 
 // Microsoft Store API endpoint for Free Play Days
@@ -97,8 +98,10 @@ export async function fetchXboxFreePlayDays(env: Env): Promise<GameFree[]> {
         startsAt,
         endsAt,
         isActive: isGameActive(startsAt, endsAt),
+        availabilityType: classifyAvailability({ startsAt, endsAt }),
         type: 'free_weekend', // Free Play Days are time-limited trials
         source: 'xbox',
+        tags: ['free-weekend', 'xbox', 'game-pass'],
         raw: {
           product_id: item.ProductId,
           start_date: item.StartDate,

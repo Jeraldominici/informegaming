@@ -3,7 +3,7 @@
  * Free, no auth required, CORS OK
  */
 
-import type { Env, GameFree, GamerPowerGiveaway, Platform, Source } from '../types';
+import type { Env, GameFree, GamerPowerGiveaway, Platform, Source, AvailabilityType } from '../types';
 import { 
   normalizePlatform, 
   normalizeType, 
@@ -12,11 +12,12 @@ import {
   isGameActive,
   sanitizeUrl,
   sanitizeImageUrl,
-  truncateDescription 
+  truncateDescription,
+  classifyAvailability
 } from '../utils/normalize';
 
 // Platform mapping for GamerPower API
-const PLATFORM_MAP: Record<Platform, string> = {
+const PLATFORM_MAP: Record<string, string> = {
   'Epic': 'epic-games-store',
   'Steam': 'steam',
   'Xbox': 'xbox-one',
@@ -81,8 +82,10 @@ export async function fetchGamerPower(env: Env, platform?: Platform): Promise<Ga
           startsAt: published,
           endsAt,
           isActive: isGameActive(published, endsAt),
+          availabilityType: classifyAvailability({ startsAt: published, endsAt }),
           type: normalizeType(item.type, primaryPlatform),
           source: 'gamerpower',
+          tags: [primaryPlatform.toLowerCase(), 'gamerpower', item.type.toLowerCase()],
           raw: {
             gamerpower_id: item.id,
             worth: item.worth,

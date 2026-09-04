@@ -197,3 +197,37 @@ export function truncateDescription(desc: string | undefined, max = 200): string
   if (cleaned.length <= max) return cleaned;
   return cleaned.slice(0, max).trimEnd() + '…';
 }
+
+/**
+ * Classify game availability type: today | week | always
+ */
+export function classifyAvailability(game: { startsAt: string; endsAt: string }): 'today' | 'week' | 'always' {
+  const now = new Date();
+  const start = new Date(game.startsAt);
+  const end = game.endsAt ? new Date(game.endsAt) : null;
+
+  // If no end date or far future (> 1 year), it's permanent F2P
+  if (!end || end.getTime() > Date.now() + 365 * 24 * 60 * 60 * 1000) {
+    return 'always';
+  }
+
+  const nowMs = now.getTime();
+  const startMs = start.getTime();
+  const endMs = end.getTime();
+
+  // If not started yet, classify by end date
+  if (nowMs < startMs) {
+    const diffDays = (end.getTime() - startMs) / (1000 * 60 * 60 * 24);
+    return diffDays <= 1 ? 'today' : 'week';
+  }
+
+  // If active now, classify by remaining time
+  if (nowMs >= startMs && nowMs <= endMs) {
+    const remainingDays = (endMs - nowMs) / (1000 * 60 * 60 * 24);
+    return remainingDays <= 1 ? 'today' : 'week';
+  }
+
+  // Expired - classify by original duration
+  const totalDays = (endMs - startMs) / (1000 * 60 * 60 * 24);
+  return totalDays <= 1 ? 'today' : 'week';
+}
