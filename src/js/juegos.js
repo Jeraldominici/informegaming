@@ -3,7 +3,28 @@ import { CONFIG } from './config.js';
 import { htmlATexto, parsearFecha, esUrlSegura, formatearDiff } from './utils.js';
 
 let todosLosJuegos = [];
-let filtroActualJuegos = 'all';
+
+// Configuración de las tres secciones
+const SECCIONES_JUEGOS = {
+    'gratis-hoy': {
+        gridId: 'gratisHoyGrid',
+        filtroContainerId: 'gratisHoyFiltros',
+        filtroActivo: 'all',
+        tipo: 'today'
+    },
+    'gratis-semana': {
+        gridId: 'gratisSemanaGrid',
+        filtroContainerId: 'gratisSemanaFiltros',
+        filtroActivo: 'all',
+        tipo: 'week'
+    },
+    'gratis-siempre': {
+        gridId: 'gratisSiempreGrid',
+        filtroContainerId: 'gratisSiempreFiltros',
+        filtroActivo: 'all',
+        tipo: 'always'
+    }
+};
 
 // Mapeo de plataforma a emoji
 const PLATFORM_EMOJI = {
@@ -12,6 +33,8 @@ const PLATFORM_EMOJI = {
     'Xbox': '🟢',
     'PS': '🔵',
     'Nintendo': '🔴',
+    'GOG': '🟡',
+    'Itchio': '🟠',
     'Multi': '🎮',
 };
 
@@ -27,10 +50,13 @@ function getBasePath() {
 const BASE_PATH = getBasePath();
 
 async function cargarJuegosGratis() {
-    const grid = document.getElementById('gratisGrid');
-    
-    // Mostrar loading
-    grid.innerHTML = '<p style="color: #8899b0; text-align: center; width: 100%;">Cargando juegos gratis...</p>';
+    // Mostrar loading en todas las grids
+    Object.values(SECCIONES_JUEGOS).forEach(seccion => {
+        const grid = document.getElementById(seccion.gridId);
+        if (grid) {
+            grid.innerHTML = '<p style="color: #8899b0; text-align: center; width: 100%;">Cargando juegos gratis...</p>';
+        }
+    });
     
     try {
         let juegosData = null;
@@ -81,24 +107,67 @@ async function cargarJuegosGratis() {
         localStorage.setItem('informegaming_juegos', JSON.stringify(juegosData));
         localStorage.setItem('informegaming_juegos_time', String(Date.now()));
         
-        todosLosJuegos = juegosData.games;
+        // Clasificar availabilityType para cada juego
+        const juegosConTipo = juegosData.games.map(juego => ({
+            ...juego,
+            availabilityType: juego.availabilityType || classifyAvailability(juego)
+        }));
+        
+        // Separar juegos por tipo de disponibilidad
+        const juegosPorTipo = {
+            'today': [],
+            'week': [],
+            'always': []
+        };
+        
+        juegosConTipo.forEach(juego => {
+            const tipo = juego.availabilityType || 'week';
+            if (juegosPorTipo[tipo]) {
+                juegosPorTipo[tipo].push(juego);
+            } else {
+                juegosPorTipo['week'].push(juego);
+            }
+        });
+        
+        // Asignar a cada sección
+        Object.entries(SECCIONES_JUEGOS).forEach(([seccionId, config]) => {
+            const juegosFiltrados = juegosPorTipo[config.tipo] || [];
+            window[`todosLosJuegos_${seccionId}`] = juegosFiltrados;
+        });
+        
         // Expose on window for SEO JSON-LD
-        window.todosLosJuegos = todosLosJuegos;
-        mostrarJuegos(filtroActualJuegos);
+        window.todosLosJuegos = juegosConTipo;
+        
+        // Renderizar cada sección
+        Object.entries(SECCIONES_JUEGOS).forEach(([seccionId, config]) => {
+            const juegos = window[`todosLosJuegos_${seccionId}`] || [];
+            window[`filtroActual_${seccionId}`] = config.filtroActivo;
+            mostrarJuegos(seccionId, config.filtroActivo);
+            setupFiltrosJuegos(config.gridId, config.filtroContainerId, seccionId);
+        });
+        
         mostrarHistorial();
         
     } catch (error) {
         console.error('Error cargando juegos:', error);
-        grid.innerHTML = 
-            '<p style="color: #ff6b6b;">Error al cargar juegos gratis. ' +
-            'Verifica tu conexión o inténtalo más tarde.</p>';
+        Object.values(SECCIONES_JUEGOS).forEach(seccion => {
+            const grid = document.getElementById(seccion.gridId);
+            if (grid) {
+                grid.innerHTML = 
+                    '<p style="color: #ff6b6b;">Error al cargar juegos gratis. ' +
+                    'Verifica tu conexión o inténtalo más tarde.</p>';
+            }
+        });
     }
 }
 
-function filtrarJuegos(filtro) {
-    if (filtro === 'all') return todosLosJuegos;
+// classifyAvailability imported from utils.js
+
+function filtrarJuegos(seccionId, filtro) {
+    const juegos = window[`todosLosJuegos_${seccionId}`] || [];
+    if (filtro === 'all') return window[`todosLosJuegos_${seccionId}`] || [];
     const termino = filtro.toLowerCase();
-    return todosLosJuegos.filter(juego => {
+    return (window[`todosLosJuegos_${seccionId}`] || []).filter(juego => {
         const plataforma = (juego.platform || '').trim().toLowerCase();
         return plataforma === termino;
     });
@@ -225,11 +294,16 @@ function crearCardJuego(juego, index) {
     return card;
 }
 
-function mostrarJuegos(filtro) {
-    const grid = document.getElementById('gratisGrid');
+function mostrarJuegos(seccionId, filtro) {
+    const config = SECCIONES_JUEGOS[seccionId];
+    if (!config) return;
+    
+    const grid = document.getElementById(config.gridId);
+    if (!grid) return;
+    
     grid.innerHTML = '';
     
-    const juegosFiltrados = filtrarJuegos(filtro);
+    const juegosFiltrados = filtrarJuegos(seccionId, filtro);
     
     if (juegosFiltrados.length === 0) {
         grid.innerHTML = '<p style="color: #8899b0; text-align: center; width: 100%;">No hay juegos gratis para este filtro.</p>';
@@ -245,9 +319,14 @@ function mostrarJuegos(filtro) {
 
 function mostrarHistorial() {
     const tbody = document.getElementById('historialBody');
+    if (!tbody) return;
     tbody.innerHTML = '';
     
     const ahora = new Date();
+    const todosLosJuegos = Object.values(SECCIONES_JUEGOS).flatMap(config => 
+        window[`todosLosJuegos_${config.gridId.replace('Grid', '')}`] || []
+    ).flat();
+    
     const expirados = todosLosJuegos.filter(juego => {
         const fin = juego.endsAt ? new Date(juego.endsAt) : null;
         return fin !== null && fin <= ahora;
@@ -291,21 +370,27 @@ function mostrarHistorial() {
     });
 }
 
-// Configurar filtros de juegos
-function setupFiltrosJuegos() {
-    const container = document.getElementById('gratisFiltros');
+// Configurar filtros de juegos para una sección
+function setupFiltrosJuegos(gridId, filtroContainerId, seccionId) {
+    const container = document.getElementById(filtroContainerId);
+    if (!container) return;
+    
     const btns = container.querySelectorAll('.filter-btn');
     
     btns.forEach(btn => {
         btn.addEventListener('click', () => {
-            btns.forEach(b => {
-                b.classList.remove('active');
-                b.setAttribute('aria-selected', 'false');
-            });
+            const container = document.getElementById(`filtroContainerId`);
+            if (container) {
+                container.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-selected', 'false');
+                });
+            }
             btn.classList.add('active');
             btn.setAttribute('aria-selected', 'true');
-            filtroActualJuegos = btn.dataset.filter;
-            mostrarJuegos(filtroActualJuegos);
+            const filtro = btn.dataset.filter;
+            window[`filtroActual_${seccionId}`] = filtro;
+            mostrarJuegos(seccionId, filtro);
         });
     });
 }
@@ -315,7 +400,7 @@ function actualizarCountdowns() {
     const ahora = Date.now();
     let expiroAlguno = false;
     
-    document.querySelectorAll('#gratisGrid .countdown[data-fin]').forEach(el => {
+    document.querySelectorAll('.countdown[data-fin]').forEach(el => {
         const diff = Number(el.dataset.fin) - ahora;
         if (diff <= 0) {
             expiroAlguno = true;
@@ -325,17 +410,27 @@ function actualizarCountdowns() {
     });
     
     if (expiroAlguno) {
-        mostrarJuegos(filtroActualJuegos);
+        // Re-renderizar todas las secciones
+        Object.keys(SECCIONES_JUEGOS).forEach(seccionId => {
+            const filtro = window[`filtroActual_${seccionId}`] || 'all';
+            mostrarJuegos(seccionId, filtro);
+        });
         mostrarHistorial();
     }
 }
 
 // Inicializar al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    setupFiltrosJuegos();
+    // Setup filtros para cada sección
+    Object.entries(SECCIONES_JUEGOS).forEach(([seccionId, config]) => {
+        setupFiltrosJuegos(config.gridId, config.filtroContainerId, seccionId);
+    });
+    
     cargarJuegosGratis();
     
     setInterval(() => {
         if (!document.hidden) actualizarCountdowns();
     }, CONFIG.countdownIntervalMs);
 });
+
+export { SECCIONES_JUEGOS, cargarJuegosGratis, mostrarJuegos, filtrarJuegos };

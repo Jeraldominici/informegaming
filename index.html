@@ -48,12 +48,12 @@
             <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
             <div class="logo">🎮 <span>informegaming</span></div>
             <nav>
-        <a href="#noticias" class="active" aria-current="page">Noticias</a>
-        <a href="#hoy">Hoy</a>
-        <a href="#semana">Esta Semana</a>
-        <a href="#siempre">Siempre Gratis</a>
-        <a href="#gta6">GTA 6</a>
-    </nav>
+                <a href="#noticias" class="active" aria-current="page">Noticias</a>
+                <a href="#hoy">Hoy</a>
+                <a href="#semana">Esta Semana</a>
+                <a href="#siempre">Siempre Gratis</a>
+                <a href="#gta6">GTA 6</a>
+            </nav>
         </div>
     </header>
 
@@ -83,21 +83,116 @@
         </div>
     </section>
 
-    <!-- ===== SECCIÓN JUEGOS GRATIS ===== -->
-    <section id="gratis" class="container" aria-labelledby="gratis-title">
-        <h2 id="gratis-title" class="section-title"><span aria-hidden="true">🎁</span> Juegos gratis de la semana</h2>
+    <!-- ===== SECCIÓN JUEGOS GRATIS - HOY ===== -->
+    <section id="gratis-hoy" class="container" aria-labelledby="gratis-hoy-title" style="display: none;">
+        <h2 id="gratis-hoy-title" class="section-title"><span aria-hidden="true">🎮</span> Juegos Gratis Hoy</h2>
         <!-- Filtros con ARIA -->
-        <div class="filters" id="gratisFiltros" role="tablist" aria-label="Filtrar juegos gratis por plataforma">
-            <button class="filter-btn active" role="tab" aria-selected="true" aria-controls="panel-gratis-all" data-filter="all" id="tab-gratis-all">Todas</button>
-            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Epic" data-filter="Epic" id="tab-gratis-Epic">Epic</button>
-            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Steam" data-filter="Steam" id="tab-gratis-Steam">Steam</button>
-            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Xbox" data-filter="Xbox" id="tab-gratis-Xbox">Xbox</button>
-            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-PS" data-filter="PS" id="tab-gratis-PS">PS</button>
-            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-gratis-Nintendo" data-filter="Nintendo" id="tab-gratis-Nintendo">Nintendo</button>
+        <div class="filters" id="gratisHoyFiltros" role="tablist" aria-label="Filtrar juegos gratis de hoy por plataforma">
+            <button class="filter-btn active" role="tab" aria-selected="true" aria-controls="panel-hoy-all" data-filter="all" id="tab-hoy-all">Todas</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-hoy-Epic" data-filter="Epic" id="tab-hoy-Epic">Epic</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-hoy-Steam" data-filter="Steam" id="tab-hoy-Steam">Steam</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-hoy-Xbox" data-filter="Xbox" id="tab-hoy-Xbox">Xbox</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-hoy-PS" data-filter="PS" id="tab-hoy-PS">PS</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-hoy-Nintendo" data-filter="Nintendo" id="tab-hoy-Nintendo">Nintendo</button>
         </div>
         <!-- Grid donde se cargarán los juegos -->
-        <div class="grid" id="gratisGrid" role="tabpanel" aria-labelledby="tab-gratis-all" id="panel-gratis-all">
+        <div class="grid" id="gratisHoyGrid" role="tabpanel" aria-labelledby="tab-hoy-all" id="panel-hoy-all">
             <p style="color: #8899b0; text-align: center; width: 100%;">Cargando juegos...</p>
+        </div>
+    </section>
+
+    <!-- ===== SECCIÓN JUEGOS GRATIS - ESTA SEMANA ===== -->
+    <section id="gratis-semana" class="container" aria-labelledby="gratis-semana-title" style="display: none;">
+        <h2 id="gratis-semana-title" class="section-title"><span aria-hidden="true">📅</span> Juegos Gratis Esta Semana</h2>
+        <!-- Filtros con ARIA -->
+        <div class="filters" id="gratisSemanaFiltros" role="tablist" aria-label="Filtrar juegos gratis de esta semana por plataforma">
+            <button class="filter-btn active" role="tab" aria-selected="true" aria-controls="panel-semana-all" data-filter="all" id="tab-semana-all">Todas</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-semana-Epic" data-filter="Epic" id="tab-semana-Epic">Epic</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-semana-Steam" data-filter="Steam" id="tab-semana-Steam">Steam</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-semana-Xbox" data-filter="Xbox" id="tab-semana-Xbox">Xbox</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-semana-PS" data-filter="PS" id="tab-semana-PS">PS</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-semana-Nintendo" data-filter="Nintendo" id="tab-semana-Nintendo">Nintendo</button>
+        </div>
+        <!-- Grid donde se cargarán los juegos -->
+        <div class="grid" id="gratisSemanaGrid" role="tabpanel" aria-labelledby="tab-semana-all" id="panel-semana-all">
+            <p style="color: #8899b0; text-align: center; width: 100%;">Cargando juegos...</p>
+        </div>
+    </section>
+
+    <!-- ===== SECCIÓN JUEGOS GRATIS - SIEMPRE GRATIS (F2P) ===== -->
+    <section id="gratis-siempre" class="container" aria-labelledby="gratis-siempre-title" style="display: none;">
+        <h2 id="gratis-siempre-title" class="section-title"><span aria-hidden="true">♾️</span> Juegos Gratis Permanentes (Free-to-Play)</h2>
+        <!-- Filtros con ARIA -->
+        <div class="filters" id="gratisSiempreFiltros" role="tablist" aria-label="Filtrar juegos free-to-play por plataforma">
+            <button class="filter-btn active" role="tab" aria-selected="true" aria-controls="panel-siempre-all" data-filter="all" id="tab-siempre-all">Todas</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-siempre-Epic" data-filter="Epic" id="tab-siempre-Epic">Epic</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-siempre-Steam" data-filter="Steam" id="tab-siempre-Steam">Steam</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-siempre-Xbox" data-filter="Xbox" id="tab-siempre-Xbox">Xbox</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-siempre-PS" data-filter="PS" id="tab-siempre-PS">PS</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-siempre-Nintendo" data-filter="Nintendo" id="tab-siempre-Nintendo">Nintendo</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-siempre-GOG" data-filter="GOG" id="tab-siempre-GOG">GOG</button>
+            <button class="filter-btn" role="tab" aria-selected="false" aria-controls="panel-siempre-Itchio" data-filter="Itchio" id="tab-siempre-Itchio">Itch.io</button>
+        </div>
+        <!-- Grid donde se cargarán los juegos -->
+        <div class="grid" id="gratisSiempreGrid" role="tabpanel" aria-labelledby="tab-siempre-all" id="panel-siempre-all">
+            <p style="color: #8899b0; text-align: center; width: 100%;">Cargando juegos...</p>
+        </div>
+    </section>
+
+    <!-- ===== SECCIÓN GTA 6 ===== -->
+    <section id="gta6" class="container" aria-labelledby="gta6-title" style="display: none;">
+        <h2 id="gta6-title" class="section-title"><span aria-hidden="true">🎮</span> Grand Theft Auto VI</h2>
+        <div class="gta6-content">
+            <div class="gta6-hero">
+                <h3>Todo sobre Grand Theft Auto VI</h3>
+                <p>Noticias, trailers, filtraciones y todo lo que necesitas saber sobre GTA 6.</p>
+                <div class="gta6-countdown" id="gta6-countdown">
+                    <!-- Countdown se inyecta via JS -->
+                </div>
+            </div>
+            <!-- Noticias GTA 6 -->
+            <div class="gta6-section">
+                <h3>📰 Noticias</h3>
+                <div class="filters" id="gta6NoticiasFiltros" role="tablist" aria-label="Filtrar noticias de GTA 6">
+                    <button class="filter-btn active" role="tab" aria-selected="true" data-filter="all">Todas</button>
+                    <button class="filter-btn" role="tab" data-filter="trailer">Trailers</button>
+                    <button class="filter-btn" role="tab" data-filter="gameplay">Gameplay</button>
+                    <button class="filter-btn" role="tab" data-filter="leak">Filtraciones</button>
+                    <button class="filter-btn" role="tab" data-filter="news">Noticias</button>
+                </div>
+                <div class="grid" id="gta6NoticiasGrid">
+                    <p style="color: #8899b0; text-align: center; width: 100%;">Cargando noticias...</p>
+                </div>
+            </div>
+            <!-- Videos GTA 6 -->
+            <div class="gta6-section">
+                <h3>🎬 Videos</h3>
+                <div class="filters" id="gta6VideosFiltros" role="tablist" aria-label="Filtrar videos de GTA 6">
+                    <button class="filter-btn active" role="tab" aria-selected="true" data-filter="all">Todos</button>
+                    <button class="filter-btn" data-filter="trailer">Trailers</button>
+                    <button class="filter-btn" data-filter="gameplay">Gameplay</button>
+                    <button class="filter-btn" data-filter="analysis">Análisis</button>
+                    <button class="filter-btn" data-filter="leak">Filtraciones</button>
+                </div>
+                <div class="grid" id="gta6VideosGrid">
+                    <p style="color: #8899b0; text-align: center; width: 100%;">Cargando videos...</p>
+                </div>
+            </div>
+            <!-- Timeline -->
+            <div class="gta6-section">
+                <h3>📅 Timeline</h3>
+                <div class="timeline" id="gta6Timeline">
+                    <!-- Timeline se inyecta via JS -->
+                </div>
+            </div>
+            <!-- Spoilers Toggle -->
+            <div class="gta6-spoilers">
+                <label class="spoiler-toggle">
+                    <input type="checkbox" id="spoiler-toggle" aria-label="Mostrar spoilers">
+                    <span class="slider"></span>
+                    <span class="label">Mostrar spoilers</span>
+                </label>
+            </div>
         </div>
     </section>
 
@@ -132,8 +227,10 @@
     <script type="module" src="src/js/config.js"></script>
     <script type="module" src="src/js/utils.js"></script>
     <script type="module" src="src/js/seo.js"></script>
+    <script type="module" src="src/js/router.js"></script>
     <script type="module" src="src/js/noticias.js"></script>
     <script type="module" src="src/js/juegos.js"></script>
+    <script type="module" src="src/js/gta6.js"></script>
 
 </body>
 </html>
