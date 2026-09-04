@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1536" viewBox="0 0 1536 1536">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="68%">
+      <stop offset="0%" stop-color="#07152a"/>
+      <stop offset="62%" stop-color="#030811"/>
+      <stop offset="100%" stop-color="#010307"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00eaff"/>
+      <stop offset="55%" stop-color="#08a7ff"/>
+      <stop offset="100%" stop-color="#be2cff"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#45efff"/>
+      <stop offset="48%" stop-color="#11bfff"/>
+      <stop offset="100%" stop-color="#006cff"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="52%" stop-color="#f0f0f0"/>
+      <stop offset="100%" stop-color="#aeb5c0"/>
+    </linearGradient>
+    <linearGradient id="gaming" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#24eaff"/>
+      <stop offset="100%" stop-color="#0878ff"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="15" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="innerClip"><circle cx="768" cy="706" r="625"/></clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1536" height="1536" fill="url(#bg)"/>
+
+  <!-- Interior subtle gamer panels -->
+  <g clip-path="url(#innerClip)" opacity="0.22">
+    <path d="M120 225 L670 70 L560 430 L95 685 Z" fill="#0d67c7"/>
+    <path d="M650 150 L1100 100 L900 390 L600 390 Z" fill="#2d12ad"/>
+    <path d="M950 210 L1410 350 L1180 650 L880 450 Z" fill="#4a159a"/>
+    <path d="M95 730 L500 500 L450 980 L120 1050 Z" fill="#063b86"/>
+    <path d="M1030 610 L1460 560 L1430 1060 L1020 930 Z" fill="#30105d"/>
+    <g fill="none" stroke="#147cff" stroke-width="10">
+      <path d="M160 690 l55 55 -72 24 z"/><rect x="540" y="120" width="45" height="45" transform="rotate(20 562 142)"/>
+    </g>
+    <g fill="none" stroke="#7828ff" stroke-width="11">
+      <path d="M1220 312 q45 -38 60 8 q-22 43 -60 -8z"/>
+    </g>
+  </g>
+
+  <!-- Outer neon ring -->
+  <circle cx="768" cy="706" r="645" fill="none" stroke="url(#ring)" stroke-width="34" opacity="0.18" filter="url(#glow)"/>
+  <circle cx="768" cy="706" r="645" fill="none" stroke="url(#ring)" stroke-width="11" filter="url(#softGlow)"/>
+  <circle cx="768" cy="706" r="625" fill="none" stroke="#0d2342" stroke-width="3"/>
+
+  <!-- IG emblem -->
+  <g filter="url(#softGlow)">
+    <!-- I -->
+    <path d="M464 300 H637 L594 385 H515 L478 696 H378 L420 385 H366 L410 300 Z" fill="url(#silver)" stroke="#111827" stroke-width="8"/>
+    <!-- G body stylized -->
+    <path d="M626 300 H967 L895 387 H714 Q681 387 681 420 V571 Q681 616 731 616 H867 L807 560 H752 Q723 560 723 531 V492 Q723 458 756 458 H1001 Q1055 458 1055 515 V663 Q1055 723 997 744 H719 Q626 744 626 654 V422 Q626 355 626 300 Z" fill="url(#cyan)" stroke="#07111f" stroke-width="10"/>
+    <!-- carve gamepad inner panel -->
+    <path d="M752 446 H973 Q1014 446 1014 487 V614 Q1014 650 980 665 L936 610 H783 Q747 610 747 574 V492 Q747 460 752 446 Z" fill="#02050a"/>
+    <!-- gamepad cross -->
+    <g fill="url(#silver)">
+      <rect x="814" y="500" width="23" height="82" rx="5"/>
+      <rect x="785" y="529" width="82" height="23" rx="5"/>
+    </g>
+    <!-- buttons -->
+    <g fill="#118eff" stroke="#4de9ff" stroke-width="3">
+      <circle cx="952" cy="501" r="14"/><circle cx="921" cy="530" r="14"/><circle cx="952" cy="559" r="14"/><circle cx="983" cy="530" r="14"/>
+    </g>
+  </g>
+
+  <!-- Brand title -->
+  <text x="768" y="875" text-anchor="middle" fill="url(#silver)" font-family="Orbitron, Rajdhani, Arial Black, sans-serif" font-size="112" font-weight="900" letter-spacing="-3">INFORME</text>
+  <text x="768" y="1013" text-anchor="middle" fill="url(#gaming)" font-family="Orbitron, Rajdhani, Arial Black, sans-serif" font-size="132" font-weight="900" letter-spacing="2">GAMING</text>
+
+  <!-- Tagline -->
+  <text x="768" y="1088" text-anchor="middle" fill="#8db7ff" font-family="Arial, sans-serif" font-size="23" font-weight="600" letter-spacing="8">NOTICIAS · ANÁLISIS · LANZAMIENTOS · COMUNIDAD</text>
+
+  <!-- Bottom separator + slogan -->
+  <line x1="375" y1="1174" x2="485" y2="1174" stroke="#16dfff" stroke-width="4"/>
+  <line x1="1050" y1="1174" x2="1161" y2="1174" stroke="#1aa8ff" stroke-width="4"/>
+  <text x="768" y="1169" text-anchor="middle" fill="#d4dbea" font-family="Arial, sans-serif" font-size="23" letter-spacing="14">EL MUNDO GAMER</text>
+  <text x="768" y="1205" text-anchor="middle" fill="#d4dbea" font-family="Arial, sans-serif" font-size="23" letter-spacing="14">EN UN SOLO LUGAR</text>
+</svg>
