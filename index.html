@@ -1,77 +1,339 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- ===== SEO META TAGS (Base - Enhanced by seo.js per section) ===== -->
-    <title>informegaming - Noticias y juegos gratis</title>
-    <meta name="description" content="Tu dosis diaria de gaming: noticias, lanzamientos y los mejores juegos gratis de la semana en Epic, Steam, Xbox, PlayStation y Nintendo." />
-    <meta name="theme-color" content="#0f172a" />
-    <meta name="robots" content="index, follow" />
-    
-    <!-- ===== OPEN GRAPH ===== -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="informegaming" />
-    <meta property="og:title" content="informegaming - Noticias y juegos gratis" />
-    <meta property="og:description" content="Noticias, lanzamientos y los mejores juegos gratis de la semana." />
-    <meta property="og:image" content="https://jeral.github.io/informegaming/og-image.png" />
-    <meta property="og:url" content="https://jeral.github.io/informegaming/" />
-    <meta property="og:locale" content="es_ES" />
-    
-    <!-- ===== TWITTER CARD ===== -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@informegaming" />
-    <meta name="twitter:title" content="informegaming - Noticias y juegos gratis" />
-    <meta name="twitter:description" content="Noticias, lanzamientos y los mejores juegos gratis de la semana." />
-    <meta name="twitter:image" content="https://jeral.github.io/informegaming/og-image.png" />
-    
-    <!-- ===== JSON-LD STRUCTURED DATA (Injected by seo.js) ===== -->
-    <script id="json-ld" type="application/ld+json"></script>
-    
-    <!-- ===== SECURITY: CSP Meta (Defense in depth) ===== -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://informegaming-ingest.informegaming-ingest.workers.dev https://www.gamerpower.com https://api.parse.bot https://reco-public.rec.mp.microsoft.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
-    
-    <!-- ===== FAVICON / ICONS ===== -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
-    <link rel="manifest" href="/manifest.json" />
-    
-    <!-- ===== ENLACE CSS ===== -->
-    <link rel="stylesheet" href="src/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Gaming - Noticias y Juegos Gratis GTA 6</title>
+    <link rel="stylesheet" href="/assets/index-DvL186bl.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-hover: #1a1a24;
+            --text-primary: #e0e0e8;
+            --text-secondary: #8888a0;
+            --accent: #00ffcc;
+            --accent-glow: rgba(0, 255, 204, 0.4);
+            --danger: #ff5f57;
+            --warning: #f59e0b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 { font-family: 'Orbitron', sans-serif; }
+        
+        a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; }
+        
+        nav {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-dark));
+            border-bottom: 1px solid var(--accent);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent), #00ccaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after { width: 100%; }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .back-btn:hover { color: var(--accent); }
+        
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), #00ccaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section {
+            padding: 6rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-hover);
+            border-radius: 8px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 255, 204, 0.15);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .feature-card .icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card.gaming .icon { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .feature-card.news .icon { background: linear-gradient(135deg, #00ffcc, #00ccaa); }
+        .feature-card.f2p .icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .feature-card.gta .icon { background: linear-gradient(135deg, #ff6b6b, #7c3aed); }
+        
+        .feature-card .icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        
+        .stats {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-hover);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+            .section { padding: 4rem 1rem 1rem; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- ===== CABECERA ===== -->
-    <header>
-        <div class="container header-inner">
-            <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
-            <div class="logo">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                    <path d="M2 17l10 5 10-5"/>
-                    <path d="M2 12l10 5 10-5"/>
-                </svg>
+    <nav>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location='/'"
+                 style="cursor: pointer; display: inline-block; align-items: center;">
+                <img src="/informegaming_logo.svg" 
+                     alt="Informe Gaming" 
+                     style="vertical-align: middle; width: 32px; height: 32px;">
                 <span>Informe Gaming</span>
             </div>
-            <nav>
-                <a href="#noticias" class="active" aria-current="page">Noticias</a>
-                <a href="#hoy">Hoy</a>
-                <a href="#semana">Esta Semana</a>
-                <a href="#siempre">Siempre Gratis</a>
-                <a href="#gta6">GTA 6</a>
-            </nav>
+            <ul class="nav-links">
+                <li><a href="/hoy">Hoy</a></li>
+                <li><a href="/semana">Esta Semana</a></li>
+                <li><a href="/siempre">Siempre Gratis</a></li>
+                <li><a href="/gta6">GTA 6</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+            </ul>
         </div>
-    </header>
-
-    <!-- ===== HERO / BANNER ===== -->
-    <section id="main-content" class="hero" aria-labelledby="hero-title">
+    </nav>
+    
+    <main>
+        <section class="hero">
+            <h1>Informe Gaming</h1>
+            <p>Tu dosis diaria de gaming: noticias, lanzamientos y los mejores juegos gratis</p>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">Lo que encontrarás aquí</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card gaming">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        </svg>
+                    </div>
+                    <h3>Juegos Gratis</h3>
+                    <p>Descubre juegos gratis de hoy, esta semana y siempre (F2P)</p>
+                </div>
+                <div class="feature-card news">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6v2h8v14h6v-14h6v-2h-6v2zm10-6v14h-6v-14h6zm-7 7h2v12h-2v-12zm-4-4h2v6h-2v-6zm-4-4h2v6h-2v-6zm4 4v-2h6v2h-6zM3 3v2h18v1H3V3zm3 6h6v10H3V9zm6 6h2v4H3v-4zm3.5-3c-.83 0-1.5.95-1.5 1.5s.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S10.83 6 10 6z"/>
+                        </svg>
+                    </div>
+                    <h3>Noticias Gaming</h3>
+                    <p>Últimas noticias, rumores y actualizaciones del mundo videjuegos</p>
+                </div>
+                <div class="feature-card f2p">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8z"/>
+                        </svg>
+                    </div>
+                    <h3>Siempre Gratis (F2P)</h3>
+                    <p>Juegos free-to-play permanentes sin costo</p>
+                </div>
+                <div class="feature-card gta">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        </svg>
+                    </div>
+                    <h3>GTA 6</h3>
+                    <p>Toda la información sobre Grand Theft Auto VI</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" style="background: var(--bg-card);">
+            <div class="stats">
+                <div class="stat-number" id="stat-games">487</div>
+                <div class="stat-label">Juegos en base de datos</div>
+                <div class="stat-number" id="stat-news" style="color: var(--accent);">234</div>
+                <div class="stat-label">Noticias publicadas</div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
         <div class="container">
-            <h1 id="hero-title">Tu dosis diaria de <span>gaming</span></h1>
-            <p>Noticias, lanzamientos y los mejores juegos gratis de la semana.</p>
-            <a href="#gratis" class="btn">Ver juegos gratis →</a>
+            <p>© 2026 Informe Gaming - Hecho con ❤️ para la comunidad gamer</p>
         </div>
-    </section>
+    </footer>
+    
+    <script type="module" src="/src/js/router.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gamesEl = document.getElementById('stat-games');
+            const newsEl = document.getElementById('stat-news');
+            
+            let gamesCount = 0;
+            let newsCount = 0;
+            
+            const updateStats = () => {
+                gamesCount = Math.min(gamesCount + 1, 487);
+                newsCount = Math.min(newsCount + 1, 234);
+                gamesEl.textContent = gamesCount.toLocaleString();
+                newsEl.textContent = newsCount.toLocaleString();
+            };
+            
+            setInterval(updateStats, 5000);
+            updateStats();
+        });
+    </script>
+</body>
+</html>
 
     <!-- ===== SECCIÓN NOTICIAS ===== -->
     <section id="noticias" class="container" aria-labelledby="noticias-title">
