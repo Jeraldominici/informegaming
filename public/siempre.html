@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <base href="/informegaming/">
     <style>
         :root {
             --bg-dark: #0a0a0f;
@@ -129,7 +130,7 @@
         
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-top: 2rem;
         }
@@ -147,8 +148,16 @@
             border-color: var(--accent);
         }
         
-        .game-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-        .game-card p { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .game-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .game-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
         
         .game-card .tags {
             display: flex;
@@ -186,82 +195,78 @@
     <nav>
         <div class="nav-container">
             <div class="logo" onclick="window.location='/'"
-     style="cursor: pointer; display: inline-block; align-items: center;">
-    <img src="/informegaming_logo.svg" 
-         alt="Informe Gaming" 
-         style="vertical-align: middle; width: 32px; height: 32px;">
-    <span>Informe Gaming</span>
-</div>
+                 style="cursor: pointer; display: inline-block; align-items: center;">
+                <img src="/informegaming_logo.svg" alt="Informe Gaming" style="vertical-align: middle; width: 32px; height: 32px;">
+            </div>
             <ul class="nav-links">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/hoy">Hoy</a></li>
-                <li><a href="/semana">Esta Semana</a></li>
-                <li><a href="/siempre">Siempre Gratis</a></li>
-                <li><a href="/gta6">GTA 6</a></li>
-                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="hoy.html">Hoy</a></li>
+                <li><a href="semana.html">Esta Semana</a></li>
+                <li><a href="siempre.html">Siempre Gratis</a></li>
+                <li><a href="gta6.html">GTA 6</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
             </ul>
-        </div>
-    </nav>
-    
-    <a href="/" class="back-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 18l-6-6-6 6"/>
-        </svg>
-        Volver al inicio
-    </a>
-    
-    <main>
-        <section class="section" id="siempre">
-            <h1 class="section-title">Siempre <span>Gratis</span> (F2P)</h1>
-            
-            <div class="always-info">
-                <p>Juegos free-to-play permanentes - siempre disponibles</p>
+        </nav>
+        
+        <a href="/"
+           class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6-6 6"/>
+            </svg>
+            Volver al inicio
+        </a>
+        
+        <main>
+            <section class="section" id="siempre">
+                <h1 class="section-title">Siempre <span>Gratis</span> (F2P)</h1>
+                
+                <div class="always-info">
+                    <p>Juegos free-to-play permanentes - siempre disponibles</p>
+                </div>
+                
+                <div class="games-grid">
+                    <!-- Cards populated by JS -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="footer-text">
+                Informe Gaming - Juegos F2P permanentes
             </div>
-            
-            <div class="games-grid">
-                <!-- Cards populated by JS -->
-            </div>
-        </section>
-    </main>
-    
-    <footer>
-        <div class="footer-text">
-            Informe Gaming - Juegos F2P permanentes
-        </div>
-    </footer>
-    
-    <script type="module" src="/src/js/router.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('/api/games/always-free')
-                .then(res => res.json())
-                .then(data => {
-                    const gamesGrid = document.querySelector('.games-grid');
-                    if (!gamesGrid) return;
-                    
-                    const games = data.games || [];
-                    
-                    if (games.length === 0) {
-                        gamesGrid.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">No hay juegos F2P listados</p>';
-                        return;
-                    }
-                    
-                    gamesGrid.innerHTML = games.map(game => `
-                        <div class="game-card">
-                            <h3>${game.title}</h3>
-                            <p>${game.platform} • ${game.genre || 'Multiplayer'}</p>
-                            <div class="tags">
-                                <span class="tag">F2P</span>
+        </footer>
+        
+        <script type="module" src="/src/js/router.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                fetch('/api/games/always-free')
+                    .then(res => res.json())
+                    .then(data => {
+                        const gamesGrid = document.querySelector('.games-grid');
+                        if (!gamesGrid) return;
+                        
+                        const games = data.games || [];
+                        
+                        if (games.length === 0) {
+                            gamesGrid.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">No hay juegos F2P listados</p>';
+                            return;
+                        }
+                        
+                        gamesGrid.innerHTML = games.map(game => `
+                            <div class="game-card">
+                                <h3>${game.title}</h3>
+                                <p>${game.platform} • ${game.genre || 'Multiplayer'}</p>
+                                <div class="tags">
+                                    <span class="tag">F2P</span>
+                                </div>
                             </div>
-                        </div>
-                    `).join('');
-                })
-                .catch(err => {
-                    console.error('Error:', err);
-                    const gamesGrid = document.querySelector('.games-grid');
-                    if (gamesGrid) gamesGrid.innerHTML = '<p style="color: var(--text-secondary);">Error</p>';
-                });
-        });
-    </script>
-</body>
+                        `).join('');
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        const gamesGrid = document.querySelector('.games-grid');
+                        if (gamesGrid) gamesGrid.innerHTML = '<p style="color: var(--text-secondary);">Error</p>';
+                    });
+            });
+        </script>
+    </body>
 </html>

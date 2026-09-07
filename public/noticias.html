@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <base href="/informegaming/">
     <style>
         :root {
             --bg-dark: #0a0a0f;
@@ -20,7 +21,7 @@
             --danger: #ff5f57;
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-tor; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', sans-serif;
@@ -188,50 +189,9 @@
             text-transform: uppercase;
         }
         
-        .noticia-expandida {
-            background: var(--bg-hover);
-            border-radius: 8px;
-            padding: 2rem;
-            margin-top: 2rem;
-            max-height: 500px;
-            overflow-y: auto;
-            transition: max-height 0.3s ease;
-        }
-        
-        .noticia-expandida.abierto {
-            max-height: 1000px;
-        }
-        
-        .noticia-resumida {
-            max-height: 180px;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .noticia-resumida.collapse {
-            max-height: 0;
-            padding-top: 0;
-        }
-        
-        .fuente-badge {
-            display: inline-block;
-            background: var(--accent-glow);
-            color: var(--accent);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            margin-top: 0.5rem;
-        }
-        
-        .noticia-card.expandida {
-            box-shadow: 0 12px 32px rgba(0, 255, 204, 0.25);
-        }
-        
         @media (max-width: 768px) {
             .nav-links { display: none; }
             .section-title { font-size: 2rem; }
-            .noticia-expandida { margin-top: 1rem; padding: 1rem; }
         }
     </style>
 </head>
@@ -239,115 +199,75 @@
     <nav>
         <div class="nav-container">
             <div class="logo" onclick="window.location='/'"
-     style="cursor: pointer; display: inline-block; align-items: center;">
-    <img src="/informegaming_logo.svg" 
-         alt="Informe Gaming" 
-         style="vertical-align: middle; width: 32px; height: 32px;">
-    <span>Informe Gaming</span>
-</div>
-            <ul class="nav-links">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/hoy">Hoy</a></li>
-                <li><a href="/semana">Esta Semana</a></li>
-                <li><a href="/siempre">Siempre Gratis</a></li>
-                <li><a href="/gta6">GTA 6</a></li>
-                <li><a href="/noticias">Noticias</a></li>
-            </ul>
-        </div>
-    </nav>
-    
-    <a href="/" class="back-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 18l-6-6-6 6"/>
-        </svg>
-        Volver al inicio
-    </a>
-    
-    <main>
-        <section class="section" id="noticias">
-            <h1 class="section-title">Noticias <span>Gaming</span></h1>
-            
-            <div class="noticias-grid" id="noticias-grid">
-                <!-- Cards populated by JS -->
+                 style="cursor: pointer; display: inline-block; align-items: center;">
+                <img src="/informegaming_logo.svg" alt="Informe Gaming" style="vertical-align: middle; width: 32px; height: 32px;">
             </div>
-        </section>
-    </main>
-    
-    <footer>
-        <div class="footer-text">
-            Informe Gaming - últimas noticias gaming
-        </div>
-    </footer>
-    
-    <script type="module" src="/src/js/router.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('/api/noticias')
-                .then(res => res.json())
-                .then(data => {
-                    const grid = document.getElementById('noticias-grid');
-                    if (!grid) return;
-                    
-                    if (!data || data.length === 0) {
-                        grid.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">No hay noticias disponibles</p>';
-                        return;
-                    }
-                    
-                    grid.innerHTML = data.map(noticia => `
-                        <article class="noticia-card" data-noticia-id="${noticia.id || Math.random().toString(36).slice(2)}">
-                            <img src="${noticia.image || '/placeholder.jpg'}" alt="${noticia.title}">
-                            <div class="content">
-                                <h3>${noticia.title}</h3>
-                                <p>${noticia.excerpt || 'Resumen de la noticia'}</p>
-                                <div class="tags">
-                                    <span class="tag">${noticia.category || 'Noticias'}</span>
+            <ul class="nav-links">
+                <li><a href="hoy.html">Hoy</a></li>
+                <li><a href="semana.html">Esta Semana</a></li>
+                <li><a href="siempre.html">Siempre Gratis</a></li>
+                <li><a href="gta6.html">GTA 6</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+            </ul>
+        </nav>
+        
+        <a href="/"
+           class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6-6 6"/>
+            </svg>
+            Volver al inicio
+        </a>
+        
+        <main>
+            <section class="section" id="noticias">
+                <h1 class="section-title">Noticias <span>Gaming</span></h1>
+                
+                <div class="noticias-grid" id="noticias-grid">
+                    <!-- Cards populated by JS -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="footer-text">
+                Informe Gaming - últimas noticias gaming
+            </div>
+        </footer>
+        
+        <script type="module" src="/src/js/router.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                fetch('/api/noticias')
+                    .then(res => res.json())
+                    .then(data => {
+                        const grid = document.getElementById('noticias-grid');
+                        if (!grid) return;
+                        
+                        if (!data || data.length === 0) {
+                            grid.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">No hay noticias disponibles</p>';
+                            return;
+                        }
+                        
+                        grid.innerHTML = data.map(noticia => `
+                            <article class="noticia-card">
+                                <img src="${noticia.image || '/placeholder.jpg'}" alt="${noticia.title}">
+                                <div class="content">
+                                    <h3>${noticia.title}</h3>
+                                    <p>${noticia.excerpt || 'Resumen de la noticia'}</p>
+                                    <div class="tags">
+                                        <span class="tag">${noticia.category || 'Noticias'}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
-                    `).join('');
-                    
-                    // Agregar event listeners para expansión
-                    document.querySelectorAll('.noticia-card').forEach(card => {
-                        card.addEventListener('click', (e) => {
-                            // No expandir si se hizo click en el enlace de "volver"
-                            if (e.target.closest('.back-btn')) return;
-                            
-                            const card = card;
-                            const content = card.querySelector('.content');
-                            const isExpanded = card.classList.contains('expandida');
-                            
-                            // Toggle expandir/contraer
-                            if (isExpanded) {
-                                card.classList.remove('expandida');
-                                content.classList.remove('noticia-expandida');
-                                content.classList.add('noticia-resumida');
-                            } else {
-                                card.classList.add('expandida');
-                                // Crear contenido expandido
-                                const noticia = data.find(n => n.title === card.querySelector('h3').textContent);
-                                if (noticia) {
-                                    content.innerHTML = `
-                                        <div class="noticia-expandida">
-                                            <h2>${noticia.title}</h2>
-                                            <p><strong>Fuente:</strong> ${noticia.source || 'Informe Gaming'}</p>
-                                            <p><strong>Fecha:</strong> ${noticia.date || 'Fecha no disponible'}</p>
-                                            <p>${noticia.content || noticia.excerpt || 'Contenido no disponible'}</p>
-                                            <span class="fuente-badge">${noticia.category || 'Noticias'}</span>
-                                        </div>
-                                    `;
-                                    content.classList.add('noticia-expandida');
-                                    content.classList.remove('noticia-resumida');
-                                }
-                            }
-                        });
+                            </article>
+                        `).join('');
+                    })
+                    .catch(err => {
+                        console.error('Error loading noticias:', err);
+                        const grid = document.getElementById('noticias-grid');
+                        if (grid) grid.innerHTML = '<p style="color: var(--text-secondary);">Error cargando noticias</p>';
                     });
-                })
-                .catch(err => {
-                    console.error('Error loading noticias:', err);
-                    const grid = document.getElementById('noticias-grid');
-                    if (grid) grid.innerHTML = '<p style="color: var(--text-secondary);">Error cargando noticias</p>';
-                });
-        });
-    </script>
-</body>
+            });
+        </script>
+    </body>
 </html>
